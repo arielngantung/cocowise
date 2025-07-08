@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator HPP - Activity-Based Costing (ABC)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #16A34A;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #15803D;
+        }
+        .btn-secondary {
+            background-color: #6B7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+        .btn-danger {
+            background-color: #DC2626;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #B91C1C;
+        }
+        .result-card {
+            border-left: 4px solid #10B981;
+            background-color: #F0FDF4;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+     <header class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="w-full px-6 py-3 flex justify-between items-center">
+            <a href="#">
+                <img src="data:image/png;base64,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" alt="CocoCost Logo" class="h-12 md:h-16">
+            </a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="landingpage.html" class="text-gray-600 hover:text-green-600">Home</a>
+                <a href="landingpage.html" class="text-gray-600 hover:text-green-600">About</a>
+                <a href="Kalkulator.html" class="text-gray-600 hover:text-green-600">Services</a>
+                <a href="#" class="text-gray-600 hover:text-green-600">Panduan</a>
+            </nav>
+                        <!-- MobileMenuBtn -->
+                    <button id="mobile-menu-button" class="md:hidden ml-4 text-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                     </button>
+                </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="landingpage.html" class="block py-2 text-gray-600 hover:text-green-600">Home</a>
+            <a href="landingpage.html" class="block py-2 text-gray-600 hover:text-green-600">About</a>
+            <a href="landingpage.html#Kontak" class="block py-2 text-gray-600 hover:text-green-600">Kontak</a>
+            <a href="#" class="block py-2 text-gray-600 hover:text-green-600">Panduan</a>
+            
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 max-w-6xl pt-40">
+        <br> <br> <br>
+        <!-- Bagian Produk -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 1: Masukkan Data Produk</h2>
+            <div id="products-container">
+                <!-- Template Produk akan dimasukkan di sini oleh JS -->
+            </div>
+            <button id="add-product-btn" class="btn btn-secondary mt-4">+ Tambah Produk</button>
+        </div>
+
+        <!-- Bagian Aktivitas Overhead -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Definisikan Aktivitas Overhead</h2>
+            <div id="activities-container">
+                <!-- Template Aktivitas akan dimasukkan di sini oleh JS -->
+            </div>
+            <button id="add-activity-btn" class="btn btn-secondary mt-4">+ Tambah Aktivitas</button>
+        </div>
+
+        <!-- Bagian Konsumsi Aktivitas -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 3: Masukkan Konsumsi Aktivitas per Produk</h2>
+            <div id="consumption-container">
+                <p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="flex justify-center items-center gap-4 my-8">
+            <button id="calculate-btn" class="btn btn-primary text-xl shadow-lg">Hitung HPP</button>
+            <button id="reset-btn" class="btn bg-gray-200 text-gray-700 hover:bg-gray-300 text-xl shadow-lg">Reset Semua</button>
+        </div>
+
+        <!-- Bagian Hasil -->
+        <div id="results-container" class="hidden">
+             <h2 class="text-2xl font-semibold mb-4 text-center">Hasil Perhitungan</h2>
+             <div id="results-content"></div>
+        </div>
+        
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Dibuat untuk membantu perhitungan biaya yang lebih akurat.</p>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- STATE MANAGEMENT ---
+            let products = [];
+            let activities = [];
+
+            // --- DOM ELEMENTS ---
+            const addProductBtn = document.getElementById('add-product-btn');
+            const addActivityBtn = document.getElementById('add-activity-btn');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const productsContainer = document.getElementById('products-container');
+            const activitiesContainer = document.getElementById('activities-container');
+            const consumptionContainer = document.getElementById('consumption-container');
+            const resultsContainer = document.getElementById('results-container');
+            const resultsContent = document.getElementById('results-content');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // --- EVENT LISTENERS ---
+            addProductBtn.addEventListener('click', () => addProduct());
+            addActivityBtn.addEventListener('click', () => addActivity());
+            calculateBtn.addEventListener('click', calculateHPP);
+            resetBtn.addEventListener('click', resetAll);
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- FUNCTIONS ---
+            function addProduct(dummyData = null) {
+                const productId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 0;
+                const product = { id: productId };
+                products.push(product);
+
+                const productDiv = document.createElement('div');
+                productDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-end p-4 border rounded-lg mb-4';
+                productDiv.setAttribute('data-product-id', productId);
+                
+                const defaultName = `Produk ${productId + 1}`;
+                productDiv.innerHTML = `
+                    <div class="input-group md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
+                        <input type="text" placeholder="Contoh: Kursi Kantor" class="input-field product-name" value="${dummyData ? dummyData.name : defaultName}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Unit Produksi</label>
+                        <input type="number" step="any" placeholder="1000" class="input-field product-units" value="${dummyData ? dummyData.units : ''}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bahan Baku /unit (Rp)</label>
+                        <input type="number" step="any" placeholder="200000" class="input-field product-material" value="${dummyData ? dummyData.material : ''}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tenaga Kerja /unit (Rp)</label>
+                        <input type="number" step="any" placeholder="100000" class="input-field product-labor" value="${dummyData ? dummyData.labor : ''}">
+                    </div>
+                    ${products.length > 1 ? `<button class="btn btn-danger btn-sm remove-product-btn" data-product-id="${productId}">Hapus</button>` : ''}
+                `;
+                productsContainer.appendChild(productDiv);
+                updateConsumptionUI();
+                attachRemoveListeners();
+            }
+
+            function addActivity(dummyData = null) {
+                const activityId = activities.length > 0 ? Math.max(...activities.map(a => a.id)) + 1 : 0;
+                const activity = { id: activityId };
+                activities.push(activity);
+
+                const activityDiv = document.createElement('div');
+                activityDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-end p-4 border rounded-lg mb-4';
+                activityDiv.setAttribute('data-activity-id', activityId);
+
+                const defaultName = `Aktivitas ${activityId + 1}`;
+                activityDiv.innerHTML = `
+                    <div class="input-group md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Aktivitas</label>
+                        <input type="text" placeholder="Contoh: Penyiapan Mesin" class="input-field activity-name" value="${dummyData ? dummyData.name : defaultName}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Biaya (Rp)</label>
+                        <input type="number" step="any" placeholder="80000000" class="input-field activity-cost" value="${dummyData ? dummyData.cost : ''}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pemicu Biaya (Driver)</label>
+                        <input type="text" placeholder="Jumlah Penyiapan" class="input-field activity-driver-name" value="${dummyData ? dummyData.driverName : ''}">
+                    </div>
+                    <div class="input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Driver</label>
+                        <input type="number" step="any" placeholder="200" class="input-field activity-driver-total" value="${dummyData ? dummyData.driverTotal : ''}">
+                    </div>
+                    ${activities.length > 1 ? `<button class="btn btn-danger btn-sm remove-activity-btn" data-activity-id="${activityId}">Hapus</button>` : ''}
+                `;
+                activitiesContainer.appendChild(activityDiv);
+                updateConsumptionUI();
+                attachRemoveListeners();
+            }
+
+            function updateConsumptionUI() {
+                consumptionContainer.innerHTML = '';
+                if (products.length === 0 || activities.length === 0) {
+                    consumptionContainer.innerHTML = '<p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>';
+                    return;
+                }
+
+                products.forEach(product => {
+                    const productEl = document.querySelector(`[data-product-id='${product.id}']`);
+                    if (!productEl) return;
+                    
+                    const productName = productEl.querySelector('.product-name').value || `Produk ${product.id + 1}`;
+                    const productConsumptionDiv = document.createElement('div');
+                    productConsumptionDiv.className = 'mb-6';
+                    productConsumptionDiv.innerHTML = `<h3 class="text-xl font-semibold mb-3">${productName}</h3>`;
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+
+                    activities.forEach(activity => {
+                        const activityEl = document.querySelector(`[data-activity-id='${activity.id}']`);
+                        if (!activityEl) return;
+
+                        const activityName = activityEl.querySelector('.activity-name').value || `Aktivitas ${activity.id + 1}`;
+                        const driverName = activityEl.querySelector('.activity-driver-name').value || 'Jumlah Driver';
+                        
+                        const consumptionGroup = document.createElement('div');
+                        consumptionGroup.className = 'input-group';
+                        consumptionGroup.innerHTML = `
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Konsumsi ${activityName} (${driverName})</label>
+                            <input type="number" step="any" placeholder="0" class="input-field consumption-input" data-product-id="${product.id}" data-activity-id="${activity.id}">
+                        `;
+                        grid.appendChild(consumptionGroup);
+                    });
+                    productConsumptionDiv.appendChild(grid);
+                    consumptionContainer.appendChild(productConsumptionDiv);
+                });
+            }
+            
+            function attachRemoveListeners() {
+                document.querySelectorAll('.remove-product-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        const idToRemove = parseInt(e.target.dataset.productId);
+                        products = products.filter(p => p.id !== idToRemove);
+                        document.querySelector(`[data-product-id='${idToRemove}']`).remove();
+                        updateConsumptionUI();
+                    };
+                });
+                document.querySelectorAll('.remove-activity-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        const idToRemove = parseInt(e.target.dataset.activityId);
+                        activities = activities.filter(a => a.id !== idToRemove);
+                        document.querySelector(`[data-activity-id='${idToRemove}']`).remove();
+                        updateConsumptionUI();
+                    };
+                });
+            }
+            
+            document.body.addEventListener('keyup', (e) => {
+                if (e.target.matches('.product-name, .activity-name, .activity-driver-name')) {
+                    updateConsumptionUI();
+                }
+            });
+
+            function calculateHPP() {
+                const productData = Array.from(document.querySelectorAll('#products-container > div')).map(p => ({
+                    id: parseInt(p.dataset.productId),
+                    name: p.querySelector('.product-name').value,
+                    units: parseFloat(p.querySelector('.product-units').value) || 0,
+                    material: parseFloat(p.querySelector('.product-material').value) || 0,
+                    labor: parseFloat(p.querySelector('.product-labor').value) || 0,
+                }));
+
+                const activityData = Array.from(document.querySelectorAll('#activities-container > div')).map(a => ({
+                    id: parseInt(a.dataset.activityId),
+                    name: a.querySelector('.activity-name').value,
+                    cost: parseFloat(a.querySelector('.activity-cost').value) || 0,
+                    driverTotal: parseFloat(a.querySelector('.activity-driver-total').value) || 0,
+                }));
+
+                const consumptionData = Array.from(document.querySelectorAll('.consumption-input')).map(c => ({
+                    productId: parseInt(c.dataset.productId),
+                    activityId: parseInt(c.dataset.activityId),
+                    value: parseFloat(c.value) || 0,
+                }));
+                
+                const activityRates = activityData.map(activity => {
+                    const rate = activity.driverTotal > 0 ? activity.cost / activity.driverTotal : 0;
+                    return { ...activity, rate };
+                });
+
+                const results = productData.map(product => {
+                    const totalDirectMaterial = product.units * product.material;
+                    const totalDirectLabor = product.units * product.labor;
+                    const totalDirectCost = totalDirectMaterial + totalDirectLabor;
+
+                    let totalOverheadAllocated = 0;
+                    activityRates.forEach(activity => {
+                        const consumption = consumptionData.find(c => c.productId === product.id && c.activityId === activity.id);
+                        if (consumption) {
+                            totalOverheadAllocated += consumption.value * activity.rate;
+                        }
+                    });
+
+                    const totalProductionCost = totalDirectCost + totalOverheadAllocated;
+                    const hppPerUnit = product.units > 0 ? totalProductionCost / product.units : 0;
+
+                    return {
+                        ...product,
+                        totalDirectCost,
+                        totalDirectLabor,
+                        totalOverheadAllocated,
+                        totalProductionCost,
+                        hppPerUnit
+                    };
+                });
+
+                displayResults(results);
+            }
+
+            function displayResults(results) {
+                resultsContent.innerHTML = '';
+                if (results.length === 0) {
+                    resultsContent.innerHTML = '<p class="text-center text-gray-500">Tidak ada data untuk ditampilkan.</p>';
+                    return;
+                }
+
+                const resultsGrid = document.createElement('div');
+                resultsGrid.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6';
+
+                results.forEach(res => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'card result-card p-5';
+                    resultDiv.innerHTML = `
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">${res.name}</h3>
+                        <div class="space-y-2 text-gray-700">
+                            <div class="flex justify-between"><span>Biaya Bahan Baku Langsung:</span> <span class="font-medium">${formatCurrency(res.units * res.material)}</span></div>
+                            <div class="flex justify-between"><span>Biaya Tenaga Kerja Langsung:</span> <span class="font-medium">${formatCurrency(res.totalDirectLabor)}</span></div>
+                            <hr class="my-2">
+                            <div class="flex justify-between"><strong>Total Biaya Langsung:</strong> <strong class="font-semibold">${formatCurrency(res.totalDirectCost)}</strong></div>
+                            <div class="flex justify-between"><span>Total Overhead Dibebankan:</span> <span class="font-medium">${formatCurrency(res.totalOverheadAllocated)}</span></div>
+                            <hr class="my-2">
+                            <div class="flex justify-between text-lg"><strong>Total Biaya Produksi:</strong> <strong class="font-semibold">${formatCurrency(res.totalProductionCost)}</strong></div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t-2 border-green-200 text-center">
+                            <p class="text-sm text-gray-600">Harga Pokok Produksi (HPP) per Unit</p>
+                            <p class="text-3xl font-bold text-green-600">${formatCurrency(res.hppPerUnit)}</p>
+                        </div>
+                    `;
+                    resultsGrid.appendChild(resultDiv);
+                });
+                
+                resultsContent.appendChild(resultsGrid);
+                resultsContainer.classList.remove('hidden');
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
+            }
+            
+            function resetAll() {
+                if (confirm("Apakah Anda yakin ingin menghapus semua inputan?")) {
+                    productsContainer.innerHTML = '';
+                    activitiesContainer.innerHTML = '';
+                    consumptionContainer.innerHTML = '<p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>';
+                    resultsContainer.classList.add('hidden');
+                    products = [];
+                    activities = [];
+                    addProduct();
+                    addActivity();
+                }
+            }
+
+            // --- INITIALIZATION ---
+            // Start with one blank product and one blank activity
+            addProduct();
+            addActivity();
+        });
+    </script>
+</body>
+</html>
