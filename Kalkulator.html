@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator HPP - Activity-Based Costing (ABC)</title>
+    <title>Kalkulator HPP - Sesuai Metode Excel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Pustaka untuk membuat file Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -20,52 +22,32 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        .input-group {
-            margin-bottom: 1rem;
+        .step-indicator {
+            transition: all 0.3s ease;
         }
-        .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #D1D5DB;
-            border-radius: 0.5rem;
-            transition: border-color 0.2s;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
-        }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .btn-primary {
-            background-color: #16A34A;
+        .step-indicator.active {
+            background-color: #16A34A; /* green-600 */
             color: white;
+            border-color: #16A34A;
         }
-        .btn-primary:hover {
-            background-color: #15803D;
-        }
-        .btn-secondary {
-            background-color: #6B7280;
+        .step-indicator.completed {
+            background-color: #10B981; /* emerald-500 */
             color: white;
+            border-color: #10B981;
         }
-        .btn-secondary:hover {
-            background-color: #4B5563;
+        .form-section {
+            display: none;
         }
-        .btn-danger {
-            background-color: #DC2626;
-            color: white;
+        .form-section.active {
+            display: block;
         }
-        .btn-danger:hover {
-            background-color: #B91C1C;
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        .result-card {
-            border-left: 4px solid #10B981;
-            background-color: #F0FDF4;
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -99,332 +81,632 @@
         </div>
     </header>
 
-    <main class="container mx-auto p-4 md:p-8 max-w-6xl pt-40">
-        <br> <br> <br>
-        <!-- Bagian Produk -->
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 1: Masukkan Data Produk</h2>
-            <div id="products-container">
-                <!-- Template Produk akan dimasukkan di sini oleh JS -->
+    <main class="container mx-auto p-4 md:p-8 max-w-6xl pt-24">
+        <br>
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Kalkulator Harga Pokok Produksi</h1>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="w-full max-w-4xl mx-auto mb-12">
+            <div class="flex items-center justify-center">
+                <div class="flex items-center flex-col md:flex-row">
+                    <div id="step-indicator-1" class="step-indicator active flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 font-bold">1</div>
+                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Produk</p>
+                </div>
+                <div class="flex-auto border-t-2 border-gray-300 mx-4"></div>
+                <div class="flex items-center flex-col md:flex-row">
+                    <div id="step-indicator-2" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 font-bold">2</div>
+                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Biaya</p>
+                </div>
+                <div class="flex-auto border-t-2 border-gray-300 mx-4"></div>
+                <div class="flex items-center flex-col md:flex-row">
+                    <div id="step-indicator-3" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 font-bold">3</div>
+                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Alokasi</p>
+                </div>
+                <div class="flex-auto border-t-2 border-gray-300 mx-4"></div>
+                <div class="flex items-center flex-col md:flex-row">
+                    <div id="step-indicator-4" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 font-bold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Dashboard</p>
+                </div>
             </div>
-            <button id="add-product-btn" class="btn btn-secondary mt-4">+ Tambah Produk</button>
         </div>
 
-        <!-- Bagian Aktivitas Overhead -->
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Definisikan Aktivitas Overhead</h2>
-            <div id="activities-container">
-                <!-- Template Aktivitas akan dimasukkan di sini oleh JS -->
+        <!-- Step 1: Produk & Volume Produksi -->
+        <section id="step-1" class="form-section active">
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 1: Tentukan Produk & Volume Produksi</h2>
+                <div id="product-list"></div>
+                <button onclick="addProduct()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                    + Tambah Produk
+                </button>
             </div>
-            <button id="add-activity-btn" class="btn btn-secondary mt-4">+ Tambah Aktivitas</button>
-        </div>
+        </section>
 
-        <!-- Bagian Konsumsi Aktivitas -->
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 3: Masukkan Konsumsi Aktivitas per Produk</h2>
-            <div id="consumption-container">
-                <p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>
+        <!-- Step 2: Biaya Langsung & Overhead -->
+        <section id="step-2" class="form-section">
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Input Total Biaya Produksi</h2>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Bahan Baku (BBB)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Nama Bahan Baku</label>
+                            <input type="text" id="bbb-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Total Biaya (Rp)</label>
+                            <input type="number" id="bbb-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Total Unit Bahan (cth: kg, liter)</label>
+                            <input type="number" id="bbb-units" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Tenaga Kerja Langsung (BTKL)</h3>
+                    <div id="btkl-list" class="space-y-4">
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600">Jenis Pekerjaan</label>
+                                <input type="text" id="btkl-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600">Total Biaya (Rp)</label>
+                                <input type="number" id="btkl-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600">Total Jam Kerja</label>
+                                <input type="number" id="btkl-hours" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Overhead Pabrik (BOP)</h3>
+                    <div id="bop-list" class="space-y-4"></div>
+                    <button onclick="addBOP()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                        + Tambah Aktivitas BOP
+                    </button>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Tombol Aksi -->
-        <div class="flex justify-center items-center gap-4 my-8">
-            <button id="calculate-btn" class="btn btn-primary text-xl shadow-lg">Hitung HPP</button>
-            <button id="reset-btn" class="btn bg-gray-200 text-gray-700 hover:bg-gray-300 text-xl shadow-lg">Reset Semua</button>
-        </div>
+        <!-- Step 3: Alokasi Biaya -->
+        <section id="step-3" class="form-section">
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 3: Alokasikan Biaya ke Setiap Produk</h2>
+                <p class="text-sm text-gray-600 mb-4">Isi berapa banyak sumber daya yang dikonsumsi oleh <strong>satu unit</strong> dari setiap produk.</p>
+                <div id="allocation-table-container" class="overflow-x-auto"></div>
+            </div>
+        </section>
 
-        <!-- Bagian Hasil -->
-        <div id="results-container" class="hidden">
-             <h2 class="text-2xl font-semibold mb-4 text-center">Hasil Perhitungan</h2>
-             <div id="results-content"></div>
+        <!-- Step 4: Dashboard -->
+        <section id="step-4" class="form-section">
+             <div class="card">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-2xl font-semibold">Hasil Akhir: Dashboard HPP</h2>
+                    <button onclick="downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 7.414V13a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Unduh Excel
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="text-sm font-semibold text-green-800">TOTAL BIAYA PRODUKSI</h4>
+                        <p id="dashboard-total-cost" class="text-2xl font-bold text-green-900">Rp 0</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="text-sm font-semibold text-blue-800">JUMLAH UNIT PRODUKSI</h4>
+                        <p id="dashboard-total-units" class="text-2xl font-bold text-blue-900">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="text-sm font-semibold text-yellow-800">HPP RATA-RATA</h4>
+                        <p id="dashboard-avg-hpp" class="text-2xl font-bold text-yellow-900">Rp 0</p>
+                    </div>
+                </div>
+
+                <!-- Cost Structure Chart -->
+                <div id="cost-structure-section" class="mt-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700">Struktur Biaya Produksi</h3>
+                    <div id="cost-structure-chart" class="space-y-4 p-4 bg-gray-50 rounded-lg">
+                        <!-- Bars will be injected here by JS -->
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2 text-gray-700 mt-8">Laporan Harga Pokok Produksi</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BBB/Unit</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BTKL/Unit</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BOP/Unit</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">HPP/Unit</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Biaya</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+             </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex justify-between">
+            <button id="prev-btn" onclick="navigate(-1)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition" style="display: none;">Kembali</button>
+            <button id="next-btn" onclick="navigate(1)" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition ml-auto">Lanjut</button>
         </div>
-        
-        <footer class="text-center mt-12 text-gray-500 text-sm">
-            <p>Dibuat untuk membantu perhitungan biaya yang lebih akurat.</p>
-        </footer>
+         <div class="mt-4 text-center">
+            <button onclick="resetCalculator()" class="text-sm text-gray-500 hover:text-red-600">Reset Kalkulator</button>
+        </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- STATE MANAGEMENT ---
-            let products = [];
-            let activities = [];
 
-            // --- DOM ELEMENTS ---
-            const addProductBtn = document.getElementById('add-product-btn');
-            const addActivityBtn = document.getElementById('add-activity-btn');
-            const calculateBtn = document.getElementById('calculate-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const productsContainer = document.getElementById('products-container');
-            const activitiesContainer = document.getElementById('activities-container');
-            const consumptionContainer = document.getElementById('consumption-container');
-            const resultsContainer = document.getElementById('results-container');
-            const resultsContent = document.getElementById('results-content');
+                document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-
-            // --- EVENT LISTENERS ---
-            addProductBtn.addEventListener('click', () => addProduct());
-            addActivityBtn.addEventListener('click', () => addActivity());
-            calculateBtn.addEventListener('click', calculateHPP);
-            resetBtn.addEventListener('click', resetAll);
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            // --- FUNCTIONS ---
-            function addProduct(dummyData = null) {
-                const productId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 0;
-                const product = { id: productId };
-                products.push(product);
-
-                const productDiv = document.createElement('div');
-                productDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-end p-4 border rounded-lg mb-4';
-                productDiv.setAttribute('data-product-id', productId);
-                
-                const defaultName = `Produk ${productId + 1}`;
-                productDiv.innerHTML = `
-                    <div class="input-group md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
-                        <input type="text" placeholder="Contoh: Kursi Kantor" class="input-field product-name" value="${dummyData ? dummyData.name : defaultName}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Unit Produksi</label>
-                        <input type="number" step="any" placeholder="1000" class="input-field product-units" value="${dummyData ? dummyData.units : ''}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Bahan Baku /unit (Rp)</label>
-                        <input type="number" step="any" placeholder="200000" class="input-field product-material" value="${dummyData ? dummyData.material : ''}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tenaga Kerja /unit (Rp)</label>
-                        <input type="number" step="any" placeholder="100000" class="input-field product-labor" value="${dummyData ? dummyData.labor : ''}">
-                    </div>
-                    ${products.length > 1 ? `<button class="btn btn-danger btn-sm remove-product-btn" data-product-id="${productId}">Hapus</button>` : ''}
-                `;
-                productsContainer.appendChild(productDiv);
-                updateConsumptionUI();
-                attachRemoveListeners();
-            }
-
-            function addActivity(dummyData = null) {
-                const activityId = activities.length > 0 ? Math.max(...activities.map(a => a.id)) + 1 : 0;
-                const activity = { id: activityId };
-                activities.push(activity);
-
-                const activityDiv = document.createElement('div');
-                activityDiv.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-end p-4 border rounded-lg mb-4';
-                activityDiv.setAttribute('data-activity-id', activityId);
-
-                const defaultName = `Aktivitas ${activityId + 1}`;
-                activityDiv.innerHTML = `
-                    <div class="input-group md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Aktivitas</label>
-                        <input type="text" placeholder="Contoh: Penyiapan Mesin" class="input-field activity-name" value="${dummyData ? dummyData.name : defaultName}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Biaya (Rp)</label>
-                        <input type="number" step="any" placeholder="80000000" class="input-field activity-cost" value="${dummyData ? dummyData.cost : ''}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pemicu Biaya (Driver)</label>
-                        <input type="text" placeholder="Jumlah Penyiapan" class="input-field activity-driver-name" value="${dummyData ? dummyData.driverName : ''}">
-                    </div>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Driver</label>
-                        <input type="number" step="any" placeholder="200" class="input-field activity-driver-total" value="${dummyData ? dummyData.driverTotal : ''}">
-                    </div>
-                    ${activities.length > 1 ? `<button class="btn btn-danger btn-sm remove-activity-btn" data-activity-id="${activityId}">Hapus</button>` : ''}
-                `;
-                activitiesContainer.appendChild(activityDiv);
-                updateConsumptionUI();
-                attachRemoveListeners();
-            }
-
-            function updateConsumptionUI() {
-                consumptionContainer.innerHTML = '';
-                if (products.length === 0 || activities.length === 0) {
-                    consumptionContainer.innerHTML = '<p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>';
-                    return;
-                }
-
-                products.forEach(product => {
-                    const productEl = document.querySelector(`[data-product-id='${product.id}']`);
-                    if (!productEl) return;
-                    
-                    const productName = productEl.querySelector('.product-name').value || `Produk ${product.id + 1}`;
-                    const productConsumptionDiv = document.createElement('div');
-                    productConsumptionDiv.className = 'mb-6';
-                    productConsumptionDiv.innerHTML = `<h3 class="text-xl font-semibold mb-3">${productName}</h3>`;
-                    
-                    const grid = document.createElement('div');
-                    grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
-
-                    activities.forEach(activity => {
-                        const activityEl = document.querySelector(`[data-activity-id='${activity.id}']`);
-                        if (!activityEl) return;
-
-                        const activityName = activityEl.querySelector('.activity-name').value || `Aktivitas ${activity.id + 1}`;
-                        const driverName = activityEl.querySelector('.activity-driver-name').value || 'Jumlah Driver';
-                        
-                        const consumptionGroup = document.createElement('div');
-                        consumptionGroup.className = 'input-group';
-                        consumptionGroup.innerHTML = `
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Konsumsi ${activityName} (${driverName})</label>
-                            <input type="number" step="any" placeholder="0" class="input-field consumption-input" data-product-id="${product.id}" data-activity-id="${activity.id}">
-                        `;
-                        grid.appendChild(consumptionGroup);
-                    });
-                    productConsumptionDiv.appendChild(grid);
-                    consumptionContainer.appendChild(productConsumptionDiv);
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
                 });
             }
-            
-            function attachRemoveListeners() {
-                document.querySelectorAll('.remove-product-btn').forEach(btn => {
-                    btn.onclick = (e) => {
-                        const idToRemove = parseInt(e.target.dataset.productId);
-                        products = products.filter(p => p.id !== idToRemove);
-                        document.querySelector(`[data-product-id='${idToRemove}']`).remove();
-                        updateConsumptionUI();
-                    };
-                });
-                document.querySelectorAll('.remove-activity-btn').forEach(btn => {
-                    btn.onclick = (e) => {
-                        const idToRemove = parseInt(e.target.dataset.activityId);
-                        activities = activities.filter(a => a.id !== idToRemove);
-                        document.querySelector(`[data-activity-id='${idToRemove}']`).remove();
-                        updateConsumptionUI();
-                    };
-                });
-            }
-            
-            document.body.addEventListener('keyup', (e) => {
-                if (e.target.matches('.product-name, .activity-name, .activity-driver-name')) {
-                    updateConsumptionUI();
-                }
-            });
-
-            function calculateHPP() {
-                const productData = Array.from(document.querySelectorAll('#products-container > div')).map(p => ({
-                    id: parseInt(p.dataset.productId),
-                    name: p.querySelector('.product-name').value,
-                    units: parseFloat(p.querySelector('.product-units').value) || 0,
-                    material: parseFloat(p.querySelector('.product-material').value) || 0,
-                    labor: parseFloat(p.querySelector('.product-labor').value) || 0,
-                }));
-
-                const activityData = Array.from(document.querySelectorAll('#activities-container > div')).map(a => ({
-                    id: parseInt(a.dataset.activityId),
-                    name: a.querySelector('.activity-name').value,
-                    cost: parseFloat(a.querySelector('.activity-cost').value) || 0,
-                    driverTotal: parseFloat(a.querySelector('.activity-driver-total').value) || 0,
-                }));
-
-                const consumptionData = Array.from(document.querySelectorAll('.consumption-input')).map(c => ({
-                    productId: parseInt(c.dataset.productId),
-                    activityId: parseInt(c.dataset.activityId),
-                    value: parseFloat(c.value) || 0,
-                }));
-                
-                const activityRates = activityData.map(activity => {
-                    const rate = activity.driverTotal > 0 ? activity.cost / activity.driverTotal : 0;
-                    return { ...activity, rate };
-                });
-
-                const results = productData.map(product => {
-                    const totalDirectMaterial = product.units * product.material;
-                    const totalDirectLabor = product.units * product.labor;
-                    const totalDirectCost = totalDirectMaterial + totalDirectLabor;
-
-                    let totalOverheadAllocated = 0;
-                    activityRates.forEach(activity => {
-                        const consumption = consumptionData.find(c => c.productId === product.id && c.activityId === activity.id);
-                        if (consumption) {
-                            totalOverheadAllocated += consumption.value * activity.rate;
-                        }
-                    });
-
-                    const totalProductionCost = totalDirectCost + totalOverheadAllocated;
-                    const hppPerUnit = product.units > 0 ? totalProductionCost / product.units : 0;
-
-                    return {
-                        ...product,
-                        totalDirectCost,
-                        totalDirectLabor,
-                        totalOverheadAllocated,
-                        totalProductionCost,
-                        hppPerUnit
-                    };
-                });
-
-                displayResults(results);
-            }
-
-            function displayResults(results) {
-                resultsContent.innerHTML = '';
-                if (results.length === 0) {
-                    resultsContent.innerHTML = '<p class="text-center text-gray-500">Tidak ada data untuk ditampilkan.</p>';
-                    return;
-                }
-
-                const resultsGrid = document.createElement('div');
-                resultsGrid.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6';
-
-                results.forEach(res => {
-                    const resultDiv = document.createElement('div');
-                    resultDiv.className = 'card result-card p-5';
-                    resultDiv.innerHTML = `
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">${res.name}</h3>
-                        <div class="space-y-2 text-gray-700">
-                            <div class="flex justify-between"><span>Biaya Bahan Baku Langsung:</span> <span class="font-medium">${formatCurrency(res.units * res.material)}</span></div>
-                            <div class="flex justify-between"><span>Biaya Tenaga Kerja Langsung:</span> <span class="font-medium">${formatCurrency(res.totalDirectLabor)}</span></div>
-                            <hr class="my-2">
-                            <div class="flex justify-between"><strong>Total Biaya Langsung:</strong> <strong class="font-semibold">${formatCurrency(res.totalDirectCost)}</strong></div>
-                            <div class="flex justify-between"><span>Total Overhead Dibebankan:</span> <span class="font-medium">${formatCurrency(res.totalOverheadAllocated)}</span></div>
-                            <hr class="my-2">
-                            <div class="flex justify-between text-lg"><strong>Total Biaya Produksi:</strong> <strong class="font-semibold">${formatCurrency(res.totalProductionCost)}</strong></div>
-                        </div>
-                        <div class="mt-4 pt-4 border-t-2 border-green-200 text-center">
-                            <p class="text-sm text-gray-600">Harga Pokok Produksi (HPP) per Unit</p>
-                            <p class="text-3xl font-bold text-green-600">${formatCurrency(res.hppPerUnit)}</p>
-                        </div>
-                    `;
-                    resultsGrid.appendChild(resultDiv);
-                });
-                
-                resultsContent.appendChild(resultsGrid);
-                resultsContainer.classList.remove('hidden');
-                resultsContainer.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            function formatCurrency(value) {
-                return new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }).format(value);
-            }
-            
-            function resetAll() {
-                if (confirm("Apakah Anda yakin ingin menghapus semua inputan?")) {
-                    productsContainer.innerHTML = '';
-                    activitiesContainer.innerHTML = '';
-                    consumptionContainer.innerHTML = '<p class="text-gray-500">Silakan tambahkan produk dan aktivitas terlebih dahulu.</p>';
-                    resultsContainer.classList.add('hidden');
-                    products = [];
-                    activities = [];
-                    addProduct();
-                    addActivity();
-                }
-            }
-
-            // --- INITIALIZATION ---
-            // Start with one blank product and one blank activity
-            addProduct();
-            addActivity();
         });
+        
+        let currentStep = 1;
+        let calculatorData = {};
+
+        function getInitialData() {
+            // Data Dari excel 
+            
+            return {
+                products: [
+                    { id: 1, name: 'Gelang', volume: 300 },
+                    { id: 2, name: 'Lampu Hias', volume: 100 },
+                    { id: 3, name: 'Gantungan Kunci', volume: 500 },
+                    { id: 4, name: 'Tempat Lilin', volume: 200 },
+                ],
+                bbb: { name: 'Batok Kelapa', cost: 1200000, units: 800 },
+                btkl: { name: 'Upah Produksi', cost: 4500000, hours: 300 },
+                bop: [
+                    { id: 1, name: 'Pengumpulan & Pembersihan', cost: 600000, driverName: 'Batok kelapa', driverUnits: 800 },
+                    { id: 2, name: 'Pemotongan & Penghalusan', cost: 1200000, driverName: 'Jam mesin', driverUnits: 120 },
+                    { id: 3, name: 'Perakitan & Finishing', cost: 1800000, driverName: 'Jam kerja', driverUnits: 180 },
+                    { id: 4, name: 'Pengepakan', cost: 400000, driverName: 'Unit produksi', driverUnits: 1100 },
+                ],
+                allocations: {
+                    1: { bbb: 0.5, btkl: 0.5, bop: { 1: 0.5, 2: 0.25, 3: 0.5, 4: 1 } },
+                    2: { bbb: 2, btkl: 2, bop: { 1: 2, 2: 1, 3: 2, 4: 1 } },
+                    3: { bbb: 0.2, btkl: 0.25, bop: { 1: 0.2, 2: 0.1, 3: 0.25, 4: 1 } },
+                    4: { bbb: 1, btkl: 1, bop: { 1: 1, 2: 0.5, 3: 1, 4: 1 } },
+                }
+            };
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            if (calculatorData.products.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada produk. Silakan tambahkan.</p>';
+                return;
+            }
+            list.innerHTML = calculatorData.products.map(p => `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2 items-center p-2 border-b" id="product-${p.id}">
+                    <input type="text" value="${p.name}" onchange="updateProduct(${p.id}, 'name', this.value)" placeholder="Nama Produk" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                    <input type="number" value="${p.volume || ''}" onchange="updateProduct(${p.id}, 'volume', this.value)" placeholder="Volume Produksi" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                    <button onclick="removeProduct(${p.id})" class="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition text-sm">Hapus</button>
+                </div>
+            `).join('');
+        }
+
+        function renderCosts() {
+            document.getElementById('bbb-name').value = calculatorData.bbb.name;
+            document.getElementById('bbb-cost').value = calculatorData.bbb.cost || '';
+            document.getElementById('bbb-units').value = calculatorData.bbb.units || '';
+            
+            document.getElementById('btkl-name').value = calculatorData.btkl.name;
+            document.getElementById('btkl-cost').value = calculatorData.btkl.cost || '';
+            document.getElementById('btkl-hours').value = calculatorData.btkl.hours || '';
+
+            const bopList = document.getElementById('bop-list');
+             if (calculatorData.bop.length === 0) {
+                bopList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada aktivitas BOP. Silakan tambahkan.</p>';
+            } else {
+                bopList.innerHTML = calculatorData.bop.map(b => `
+                    <div class="p-4 border rounded-lg" id="bop-${b.id}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" value="${b.name}" onchange="updateBOP(${b.id}, 'name', this.value)" placeholder="Nama Aktivitas BOP" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.cost || ''}" onchange="updateBOP(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="text" value="${b.driverName}" onchange="updateBOP(${b.id}, 'driverName', this.value)" placeholder="Nama Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.driverUnits || ''}" onchange="updateBOP(${b.id}, 'driverUnits', this.value)" placeholder="Jumlah Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                         <button onclick="removeBOP(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Aktivitas</button>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function renderAllocationTable() {
+            const container = document.getElementById('allocation-table-container');
+            if (calculatorData.products.length === 0) {
+                 container.innerHTML = '<p class="text-center text-gray-500 py-4">Silakan tambahkan produk dan biaya terlebih dahulu.</p>';
+                return;
+            }
+
+            const bbbDriverName = calculatorData.bbb.name || 'Bahan Baku';
+            const btklDriverName = calculatorData.btkl.name || 'Tenaga Kerja';
+            
+            let header = `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>`;
+            header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${calculatorData.bbb.name || ''}">${bbbDriverName}</th>`;
+            header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${btklDriverName}">${btklDriverName}</th>`;
+            calculatorData.bop.forEach(b => {
+                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BOP'}</th>`;
+            });
+
+            let body = '';
+            calculatorData.products.forEach(p => {
+                let row = `<td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${p.name || `Produk #${p.id}`}</td>`;
+                const alloc = calculatorData.allocations[p.id] || { bbb: 0, btkl: 0, bop: {} };
+                
+                row += `<td><input type="number" step="any" value="${alloc.bbb || ''}" onchange="updateAllocation(${p.id}, 'bbb', null, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+                row += `<td><input type="number" step="any" value="${alloc.btkl || ''}" onchange="updateAllocation(${p.id}, 'btkl', null, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+
+                calculatorData.bop.forEach(b => {
+                    const bopAlloc = (alloc.bop && alloc.bop[b.id]) ? alloc.bop[b.id] : 0;
+                    row += `<td><input type="number" step="any" value="${bopAlloc || ''}" onchange="updateAllocation(${p.id}, 'bop', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+                });
+                body += `<tr class="border-b">${row}</tr>`;
+            });
+
+            container.innerHTML = `<table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>${header}</tr></thead><tbody class="bg-white divide-y divide-gray-200">${body}</tbody></table>`;
+        }
+
+        function addProduct() {
+            const newId = (calculatorData.products.length > 0 ? Math.max(...calculatorData.products.map(p => p.id)) : 0) + 1;
+            calculatorData.products.push({ id: newId, name: '', volume: 0 });
+            calculatorData.allocations[newId] = { bbb: 0, btkl: 0, bop: {} };
+            renderProducts();
+        }
+
+        function removeProduct(id) {
+            calculatorData.products = calculatorData.products.filter(p => p.id !== id);
+            delete calculatorData.allocations[id];
+            renderProducts();
+        }
+
+        function updateProduct(id, field, value) {
+            const product = calculatorData.products.find(p => p.id === id);
+            if (product) {
+                product[field] = (field === 'name') ? value : parseFloat(value) || 0;
+            }
+        }
+
+        function addBOP() {
+            const newId = (calculatorData.bop.length > 0 ? Math.max(...calculatorData.bop.map(b => b.id)) : 0) + 1;
+            calculatorData.bop.push({ id: newId, name: '', cost: 0, driverName: '', driverUnits: 0 });
+            renderCosts();
+        }
+
+        function removeBOP(id) {
+            calculatorData.bop = calculatorData.bop.filter(b => b.id !== id);
+            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.bop[id]; });
+            renderCosts();
+        }
+
+        function updateBOP(id, field, value) {
+            const bop = calculatorData.bop.find(b => b.id === id);
+            if (bop) {
+                bop[field] = ['name', 'driverName'].includes(field) ? value : parseFloat(value) || 0;
+            }
+        }
+
+        function updateAllocation(productId, type, typeId, value) {
+            const val = parseFloat(value) || 0;
+            const alloc = calculatorData.allocations[productId];
+            if (!alloc) return;
+
+            if (type === 'bbb' || type === 'btkl') {
+                alloc[type] = val;
+            } else { // BOP
+                if (!alloc.bop) alloc.bop = {};
+                alloc.bop[typeId] = val;
+            }
+        }
+        
+        function updateCostData() {
+            calculatorData.bbb.name = document.getElementById('bbb-name').value;
+            calculatorData.bbb.cost = parseFloat(document.getElementById('bbb-cost').value) || 0;
+            calculatorData.bbb.units = parseFloat(document.getElementById('bbb-units').value) || 0;
+
+            calculatorData.btkl.name = document.getElementById('btkl-name').value;
+            calculatorData.btkl.cost = parseFloat(document.getElementById('btkl-cost').value) || 0;
+            calculatorData.btkl.hours = parseFloat(document.getElementById('btkl-hours').value) || 0;
+        }
+
+        /**
+         * LOGIC UPDATED: Calculation for BBB and BTKL rates is now based on total production units,
+         * matching the user's Excel file logic.
+         */
+        function calculateHPP() {
+            const results = [];
+            const totalProductionUnits = calculatorData.products.reduce((sum, p) => sum + (p.volume || 0), 0);
+
+            // EXCEL'S METHOD: Rate is based on total production units for BBB and BTKL.
+            const bbbRate = (totalProductionUnits > 0) ? calculatorData.bbb.cost / totalProductionUnits : 0;
+            const btklRate = (totalProductionUnits > 0) ? calculatorData.btkl.cost / totalProductionUnits : 0;
+            
+            // BOP calculation remains standard ABC (based on specific drivers).
+            const bopRates = {};
+            calculatorData.bop.forEach(b => {
+                bopRates[b.id] = (b.driverUnits > 0) ? b.cost / b.driverUnits : 0;
+            });
+
+            let totalProductionCost = 0;
+            let totalBBB = 0;
+            let totalBTKL = 0;
+            let totalBOP = 0;
+
+            for (const product of calculatorData.products) {
+                const alloc = calculatorData.allocations[product.id];
+                if (!alloc) continue;
+
+                // The allocation value now acts as a multiplier for the averaged-out rate.
+                const bbbPerUnit = (alloc.bbb || 0) * bbbRate;
+                const btklPerUnit = (alloc.btkl || 0) * btklRate;
+                
+                let bopPerUnit = 0;
+                for (const bopItem of calculatorData.bop) {
+                    const bopAllocValue = (alloc.bop && alloc.bop[bopItem.id]) ? alloc.bop[bopItem.id] : 0;
+                    bopPerUnit += bopAllocValue * bopRates[bopItem.id];
+                }
+
+                const hppPerUnit = bbbPerUnit + btklPerUnit + bopPerUnit;
+                const totalCostForProduct = hppPerUnit * (product.volume || 0);
+
+                results.push({
+                    name: product.name,
+                    volume: product.volume || 0,
+                    bbbPerUnit,
+                    btklPerUnit,
+                    bopPerUnit,
+                    hppPerUnit,
+                    totalCost: totalCostForProduct
+                });
+                
+                totalBBB += bbbPerUnit * (product.volume || 0);
+                totalBTKL += btklPerUnit * (product.volume || 0);
+                totalBOP += bopPerUnit * (product.volume || 0);
+            }
+            
+            totalProductionCost = totalBBB + totalBTKL + totalBOP;
+            const avgHpp = totalProductionUnits > 0 ? totalProductionCost / totalProductionUnits : 0;
+            
+            const bbbPercentage = (totalProductionCost > 0) ? (totalBBB / totalProductionCost) * 100 : 0;
+            const btklPercentage = (totalProductionCost > 0) ? (totalBTKL / totalProductionCost) * 100 : 0;
+            const bopPercentage = (totalProductionCost > 0) ? (totalBOP / totalProductionCost) * 100 : 0;
+
+            return { 
+                results, 
+                totalProductionCost, 
+                totalProductionUnits, 
+                avgHpp,
+                costStructure: { 
+                    totalBBB, 
+                    totalBTKL, 
+                    totalBOP, 
+                    bbbPercentage, 
+                    btklPercentage, 
+                    bopPercentage 
+                }
+            };
+        }
+        
+        function renderDashboard() {
+            const { results, totalProductionCost, totalProductionUnits, avgHpp, costStructure } = calculateHPP();
+            const formatCurrency = (value) => `Rp ${value.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            document.getElementById('dashboard-total-cost').textContent = formatCurrency(totalProductionCost);
+            document.getElementById('dashboard-total-units').textContent = totalProductionUnits.toLocaleString('id-ID');
+            document.getElementById('dashboard-avg-hpp').textContent = formatCurrency(avgHpp);
+
+            const tableBody = document.getElementById('dashboard-table-body');
+            tableBody.innerHTML = results.map(r => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${r.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">${formatCurrency(r.bbbPerUnit)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">${formatCurrency(r.btklPerUnit)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">${formatCurrency(r.bopPerUnit)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right font-bold text-green-600">${formatCurrency(r.hppPerUnit)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">${formatCurrency(r.totalCost)}</td>
+                </tr>
+            `).join('');
+
+            const chartContainer = document.getElementById('cost-structure-chart');
+            if (totalProductionCost > 0) {
+                chartContainer.innerHTML = `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-blue-700">Biaya Bahan Baku (BBB)</span>
+                        <span class="text-sm font-medium text-blue-700">${costStructure.bbbPercentage.toFixed(2)}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: ${costStructure.bbbPercentage}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-orange-700">Biaya Tenaga Kerja (BTKL)</span>
+                        <span class="text-sm font-medium text-orange-700">${costStructure.btklPercentage.toFixed(2)}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div class="bg-orange-500 h-4 rounded-full" style="width: ${costStructure.btklPercentage}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-red-700">Biaya Overhead (BOP)</span>
+                        <span class="text-sm font-medium text-red-700">${costStructure.bopPercentage.toFixed(2)}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div class="bg-red-600 h-4 rounded-full" style="width: ${costStructure.bopPercentage}%"></div>
+                    </div>
+                </div>
+                `;
+            } else {
+                chartContainer.innerHTML = '<p class="text-center text-gray-500">Data biaya belum cukup untuk menampilkan struktur biaya.</p>';
+            }
+        }
+
+        function navigate(direction) {
+            const newStep = currentStep + direction;
+            if (newStep < 1 || newStep > 4) return;
+
+            if (direction > 0) {
+                 if (currentStep === 1) { renderCosts(); }
+                 if (currentStep === 2) { updateCostData(); renderAllocationTable(); }
+                 if (currentStep === 3) { renderDashboard(); }
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            if (direction > 0) {
+                document.getElementById(`step-indicator-${currentStep}`).classList.add('completed');
+                document.getElementById(`step-indicator-${currentStep}`).classList.remove('active');
+            } else {
+                 document.getElementById(`step-indicator-${currentStep-1}`).classList.remove('completed');
+            }
+
+            currentStep = newStep;
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.getElementById(`step-indicator-${currentStep}`).classList.add('active');
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            document.getElementById('prev-btn').style.display = (currentStep > 1) ? 'block' : 'none';
+            document.getElementById('next-btn').style.display = (currentStep < 4) ? 'block' : 'none';
+        }
+
+        function updateStepIndicators() {
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById(`step-indicator-${i}`);
+                indicator.classList.remove('active', 'completed');
+                if (i < currentStep) {
+                    indicator.classList.add('completed');
+                } else if (i === currentStep) {
+                    indicator.classList.add('active');
+                }
+            }
+        }
+        
+        function resetCalculator() {
+            currentStep = 1;
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-1').classList.add('active');
+            initialize(true);
+            updateStepIndicators();
+            updateNavButtons();
+        }
+        
+        function initialize(isReset = false) {
+            calculatorData = getInitialData();
+            renderProducts();
+            renderCosts();
+            renderAllocationTable();
+            renderDashboard();
+        }
+
+        function downloadExcel() {
+            const { results, totalProductionCost, totalProductionUnits, avgHpp, costStructure } = calculateHPP();
+            if (results.length === 0) {
+                alert("Tidak ada data untuk diunduh. Silakan lengkapi perhitungan terlebih dahulu.");
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            let ws_data = [];
+
+            // --- Section 1: Summary ---
+            ws_data.push(['TOTAL BIAYA PRODUKSI', totalProductionCost]);
+            ws_data.push(['JUMLAH UNIT PRODUKSI', totalProductionUnits]);
+            ws_data.push(['HPP RATA-RATA', avgHpp]);
+            ws_data.push([]); // Spacer
+
+            // --- Section 2: Cost Structure ---
+            ws_data.push(['STRUKTUR BIAYA PRODUKSI']);
+            ws_data.push(['Komponen Biaya', 'Total Biaya', 'Persentase']);
+            ws_data.push(['Biaya Bahan Baku (BBB)', costStructure.totalBBB, costStructure.bbbPercentage / 100]);
+            ws_data.push(['Biaya Tenaga Kerja (BTKL)', costStructure.totalBTKL, costStructure.btklPercentage / 100]);
+            ws_data.push(['Biaya Overhead (BOP)', costStructure.totalBOP, costStructure.bopPercentage / 100]);
+            ws_data.push([]); // Spacer
+
+            // --- Section 3: HPP Report ---
+            ws_data.push(['LAPORAN HARGA POKOK PRODUKSI']);
+            const header = ['Produk', 'Volume', 'BBB/Unit', 'BTKL/Unit', 'BOP/Unit', 'HPP/Unit', 'Total Biaya'];
+            ws_data.push(header);
+            results.forEach(r => {
+                ws_data.push([
+                    r.name,
+                    r.volume,
+                    r.bbbPerUnit,
+                    r.btklPerUnit,
+                    r.bopPerUnit,
+                    r.hppPerUnit,
+                    r.totalCost
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+            // --- Formatting ---
+            const rpFormat = '"Rp"#,##0.00';
+            const percentFormat = '0.00%';
+
+            // Column Widths
+            ws['!cols'] = [
+                { wch: 30 }, // A
+                { wch: 18 }, // B
+                { wch: 18 }, // C
+                { wch: 18 }, // D
+                { wch: 18 }, // E
+                { wch: 18 }, // F
+                { wch: 20 }  // G
+            ];
+
+            // Apply formats
+            // Section 1
+            if(ws['B1']) ws['B1'].z = rpFormat;
+            if(ws['B3']) ws['B3'].z = rpFormat;
+            
+            // Section 2
+            if(ws['B7']) ws['B7'].z = rpFormat;
+            if(ws['B8']) ws['B8'].z = rpFormat;
+            if(ws['B9']) ws['B9'].z = rpFormat;
+            if(ws['C7']) ws['C7'].z = percentFormat;
+            if(ws['C8']) ws['C8'].z = percentFormat;
+            if(ws['C9']) ws['C9'].z = percentFormat;
+
+            // Section 3
+            const reportStartRow = 13;
+            results.forEach((r, index) => {
+                const row = reportStartRow + index;
+                if(ws[`C${row}`]) ws[`C${row}`].z = rpFormat;
+                if(ws[`D${row}`]) ws[`D${row}`].z = rpFormat;
+                if(ws[`E${row}`]) ws[`E${row}`].z = rpFormat;
+                if(ws[`F${row}`]) ws[`F${row}`].z = rpFormat;
+                if(ws[`G${row}`]) ws[`G${row}`].z = rpFormat;
+            });
+
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan HPP");
+            XLSX.writeFile(wb, "Laporan_HPP.xlsx");
+        }
+
+        window.onload = initialize;
     </script>
 </body>
 </html>
