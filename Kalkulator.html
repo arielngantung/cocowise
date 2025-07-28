@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Pustaka untuk membuat file Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- Pustaka untuk membuat Grafik (Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -57,7 +59,7 @@
      <header class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div class="w-full px-6 py-3 flex justify-between items-center">
             <a href="#">
-                <img src="data:image/png;base64,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" alt="CocoCost Logo" class="h-12 md:h-16">
+                <img src="img/Logo1.jpg" alt="CocoCost Logo" class="h-12 md:h-16">
             </a>
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="index.html" class="text-gray-600 hover:text-green-600">Home</a>
@@ -81,7 +83,7 @@
         </div>
     </header>
 
-    <main class="container mx-auto p-4 md:p-8 max-w-6xl pt-24">
+    <main class="container mx-auto p-4 md:p-8 max-w-6xl pt-24 relative z-10">
         <br> <br> <br>
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Kalkulator Harga Pokok Produksi</h1>
@@ -117,11 +119,20 @@
         <!-- Step 1: Produk & Volume Produksi -->
         <section id="step-1" class="form-section active">
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 1: Tentukan Produk & Volume Produksi</h2>
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 1: Tentukan Produk Utama</h2>
                 <div id="product-list"></div>
                 <button onclick="addProduct()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
-                    + Tambah Produk
+                    + Tambah Produk Utama
                 </button>
+                
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Produk Tambahan (Pengurang Biaya)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Masukkan produk sampingan atau tambahan yang nilainya akan mengurangi total biaya produksi.</p>
+                    <div id="additional-product-list"></div>
+                    <button onclick="addAdditionalProduct()" class="mt-4 w-full bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200 transition">
+                        + Tambah Produk Tambahan
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -131,41 +142,19 @@
                 <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Input Total Biaya Produksi</h2>
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Bahan Baku (BBB)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Nama Bahan Baku</label>
-                            <input type="text" id="bbb-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Total Biaya (Rp)</label>
-                            <input type="number" id="bbb-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600">Total Unit Bahan (cth: kg, liter)</label>
-                            <input type="number" id="bbb-units" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                    </div>
+                    <div id="bbb-list" class="space-y-4"></div>
+                    <button onclick="addBBB()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                        + Tambah Bahan Baku
+                    </button>
                 </div>
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Tenaga Kerja Langsung (BTKL)</h3>
-                    <div id="btkl-list" class="space-y-4">
-                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Jenis Pekerjaan</label>
-                                <input type="text" id="btkl-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Total Biaya (Rp)</label>
-                                <input type="number" id="btkl-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Total Jam Kerja</label>
-                                <input type="number" id="btkl-hours" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            </div>
-                        </div>
-                    </div>
+                    <div id="btkl-list" class="space-y-4"></div>
+                     <button onclick="addBTKL()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                        + Tambah Pekerjaan BTKL
+                    </button>
                 </div>
-                <div>
+                <div class="mb-6">
                     <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Overhead Pabrik (BOP)</h3>
                     <div id="bop-list" class="space-y-4"></div>
                     <button onclick="addBOP()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
@@ -211,29 +200,35 @@
                     </div>
                 </div>
 
-                <!-- Cost Structure Chart -->
                 <div id="cost-structure-section" class="mt-8">
                     <h3 class="text-xl font-semibold mb-4 text-gray-700">Struktur Biaya Produksi</h3>
-                    <div id="cost-structure-chart" class="space-y-4 p-4 bg-gray-50 rounded-lg">
-                        <!-- Bars will be injected here by JS -->
+                    <div id="cost-structure-chart" class="space-y-4 p-4 bg-gray-50 rounded-lg"></div>
+                </div>
+
+                    <div id="hpp-comparison-section" class="mt-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700">Perbandingan HPP per Unit Produk</h3>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <canvas id="hpp-comparison-chart"></canvas>
                     </div>
                 </div>
 
-                <h3 class="text-xl font-semibold mb-2 text-gray-700 mt-8">Laporan Harga Pokok Produksi</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BBB/Unit</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BTKL/Unit</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BOP/Unit</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">HPP/Unit</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Biaya</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboard-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Laporan Harga Pokok Produksi</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BBB/Unit</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BTKL/Unit</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BOP/Unit</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">HPP/Unit</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Biaya</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
                 </div>
              </div>
         </section>
@@ -249,8 +244,7 @@
     </main>
 
     <script>
-
-                document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenuButton) {
@@ -262,38 +256,23 @@
 
         let currentStep = 1;
         let calculatorData = {};
+        let hppChart = null;
 
         function getInitialData() {
-            // Data Dari excel 
-            
             return {
-                products: [
-                    { id: 1, name: 'Gelang', volume: 300 },
-                    { id: 2, name: 'Lampu Hias', volume: 100 },
-                    { id: 3, name: 'Gantungan Kunci', volume: 500 },
-                    { id: 4, name: 'Tempat Lilin', volume: 200 },
-                ],
-                bbb: { name: 'Batok Kelapa', cost: 1200000, units: 800 },
-                btkl: { name: 'Upah Produksi', cost: 4500000, hours: 300 },
-                bop: [
-                    { id: 1, name: 'Pengumpulan & Pembersihan', cost: 600000, driverName: 'Batok kelapa', driverUnits: 800 },
-                    { id: 2, name: 'Pemotongan & Penghalusan', cost: 1200000, driverName: 'Jam mesin', driverUnits: 120 },
-                    { id: 3, name: 'Perakitan & Finishing', cost: 1800000, driverName: 'Jam kerja', driverUnits: 180 },
-                    { id: 4, name: 'Pengepakan', cost: 400000, driverName: 'Unit produksi', driverUnits: 1100 },
-                ],
-                allocations: {
-                    1: { bbb: 0.5, btkl: 0.5, bop: { 1: 0.5, 2: 0.25, 3: 0.5, 4: 1 } },
-                    2: { bbb: 2, btkl: 2, bop: { 1: 2, 2: 1, 3: 2, 4: 1 } },
-                    3: { bbb: 0.2, btkl: 0.25, bop: { 1: 0.2, 2: 0.1, 3: 0.25, 4: 1 } },
-                    4: { bbb: 1, btkl: 1, bop: { 1: 1, 2: 0.5, 3: 1, 4: 1 } },
-                }
+                products: [],
+                additionalProducts: [],
+                bbbs: [],
+                btkls: [],
+                bop: [],
+                allocations: {}
             };
         }
 
         function renderProducts() {
             const list = document.getElementById('product-list');
             if (calculatorData.products.length === 0) {
-                list.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada produk. Silakan tambahkan.</p>';
+                list.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada produk utama. Silakan tambahkan.</p>';
                 return;
             }
             list.innerHTML = calculatorData.products.map(p => `
@@ -304,15 +283,57 @@
                 </div>
             `).join('');
         }
+        
+        function renderAdditionalProducts() {
+            const list = document.getElementById('additional-product-list');
+            if (calculatorData.additionalProducts.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada produk tambahan.</p>';
+                return;
+            }
+            list.innerHTML = calculatorData.additionalProducts.map(p => `
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2 items-center p-2 border-b" id="add-product-${p.id}">
+                    <input type="text" value="${p.name}" onchange="updateAdditionalProduct(${p.id}, 'name', this.value)" placeholder="Nama Produk Tambahan" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <input type="number" value="${p.quantity || ''}" onchange="updateAdditionalProduct(${p.id}, 'quantity', this.value)" placeholder="Jumlah" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <input type="number" value="${p.price || ''}" onchange="updateAdditionalProduct(${p.id}, 'price', this.value)" placeholder="Harga per Unit (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <button onclick="removeAdditionalProduct(${p.id})" class="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition text-sm">Hapus</button>
+                </div>
+            `).join('');
+        }
 
         function renderCosts() {
-            document.getElementById('bbb-name').value = calculatorData.bbb.name;
-            document.getElementById('bbb-cost').value = calculatorData.bbb.cost || '';
-            document.getElementById('bbb-units').value = calculatorData.bbb.units || '';
-            
-            document.getElementById('btkl-name').value = calculatorData.btkl.name;
-            document.getElementById('btkl-cost').value = calculatorData.btkl.cost || '';
-            document.getElementById('btkl-hours').value = calculatorData.btkl.hours || '';
+            const bbbList = document.getElementById('bbb-list');
+            if (calculatorData.bbbs.length === 0) {
+                bbbList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada bahan baku. Silakan tambahkan.</p>';
+            } else {
+                bbbList.innerHTML = calculatorData.bbbs.map(b => `
+                    <div class="p-4 border rounded-lg" id="bbb-${b.id}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" value="${b.name}" onchange="updateBBB(${b.id}, 'name', this.value)" placeholder="Nama Bahan Baku" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.cost || ''}" onchange="updateBBB(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="text" value="${b.driverName}" onchange="updateBBB(${b.id}, 'driverName', this.value)" placeholder="Unit Driver (cth: kg, liter)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.units || ''}" onchange="updateBBB(${b.id}, 'units', this.value)" placeholder="Total Unit Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                         <button onclick="removeBBB(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Bahan Baku</button>
+                    </div>
+                `).join('');
+            }
+
+            const btklList = document.getElementById('btkl-list');
+            if (calculatorData.btkls.length === 0) {
+                btklList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada pekerjaan. Silakan tambahkan.</p>';
+            } else {
+                btklList.innerHTML = calculatorData.btkls.map(b => `
+                    <div class="p-4 border rounded-lg" id="btkl-${b.id}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" value="${b.name}" onchange="updateBTKL(${b.id}, 'name', this.value)" placeholder="Jenis Pekerjaan" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.cost || ''}" onchange="updateBTKL(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="text" value="${b.driverName}" onchange="updateBTKL(${b.id}, 'driverName', this.value)" placeholder="Unit Driver (cth: Jam Kerja)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <input type="number" value="${b.hours || ''}" onchange="updateBTKL(${b.id}, 'hours', this.value)" placeholder="Total Unit Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        </div>
+                         <button onclick="removeBTKL(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Pekerjaan</button>
+                    </div>
+                `).join('');
+            }
 
             const bopList = document.getElementById('bop-list');
              if (calculatorData.bop.length === 0) {
@@ -338,13 +359,14 @@
                  container.innerHTML = '<p class="text-center text-gray-500 py-4">Silakan tambahkan produk dan biaya terlebih dahulu.</p>';
                 return;
             }
-
-            const bbbDriverName = calculatorData.bbb.name || 'Bahan Baku';
-            const btklDriverName = calculatorData.btkl.name || 'Tenaga Kerja';
             
             let header = `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>`;
-            header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${calculatorData.bbb.name || ''}">${bbbDriverName}</th>`;
-            header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${btklDriverName}">${btklDriverName}</th>`;
+            calculatorData.bbbs.forEach(b => {
+                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BBB'}</th>`;
+            });
+            calculatorData.btkls.forEach(b => {
+                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BTKL'}</th>`;
+            });
             calculatorData.bop.forEach(b => {
                 header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BOP'}</th>`;
             });
@@ -352,15 +374,21 @@
             let body = '';
             calculatorData.products.forEach(p => {
                 let row = `<td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${p.name || `Produk #${p.id}`}</td>`;
-                const alloc = calculatorData.allocations[p.id] || { bbb: 0, btkl: 0, bop: {} };
+                const alloc = calculatorData.allocations[p.id] || { bbbs: {}, btkls: {}, bop: {} };
                 
-                row += `<td><input type="number" step="any" value="${alloc.bbb || ''}" onchange="updateAllocation(${p.id}, 'bbb', null, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
-                row += `<td><input type="number" step="any" value="${alloc.btkl || ''}" onchange="updateAllocation(${p.id}, 'btkl', null, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
-
+                calculatorData.bbbs.forEach(b => {
+                    const bbbAlloc = (alloc.bbbs && alloc.bbbs[b.id]) ? alloc.bbbs[b.id] : 0;
+                    row += `<td><input type="number" step="any" value="${bbbAlloc || ''}" onchange="updateAllocation(${p.id}, 'bbb', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+                });
+                calculatorData.btkls.forEach(b => {
+                    const btklAlloc = (alloc.btkls && alloc.btkls[b.id]) ? alloc.btkls[b.id] : 0;
+                    row += `<td><input type="number" step="any" value="${btklAlloc || ''}" onchange="updateAllocation(${p.id}, 'btkl', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+                });
                 calculatorData.bop.forEach(b => {
                     const bopAlloc = (alloc.bop && alloc.bop[b.id]) ? alloc.bop[b.id] : 0;
                     row += `<td><input type="number" step="any" value="${bopAlloc || ''}" onchange="updateAllocation(${p.id}, 'bop', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
                 });
+
                 body += `<tr class="border-b">${row}</tr>`;
             });
 
@@ -370,7 +398,7 @@
         function addProduct() {
             const newId = (calculatorData.products.length > 0 ? Math.max(...calculatorData.products.map(p => p.id)) : 0) + 1;
             calculatorData.products.push({ id: newId, name: '', volume: 0 });
-            calculatorData.allocations[newId] = { bbb: 0, btkl: 0, bop: {} };
+            calculatorData.allocations[newId] = { bbbs: {}, btkls:{}, bop: {} };
             renderProducts();
         }
 
@@ -384,6 +412,58 @@
             const product = calculatorData.products.find(p => p.id === id);
             if (product) {
                 product[field] = (field === 'name') ? value : parseFloat(value) || 0;
+            }
+        }
+
+        function addAdditionalProduct() {
+            const newId = (calculatorData.additionalProducts.length > 0 ? Math.max(...calculatorData.additionalProducts.map(p => p.id)) : 0) + 1;
+            calculatorData.additionalProducts.push({ id: newId, name: '', quantity: 0, price: 0 });
+            renderAdditionalProducts();
+        }
+
+        function removeAdditionalProduct(id) {
+            calculatorData.additionalProducts = calculatorData.additionalProducts.filter(p => p.id !== id);
+            renderAdditionalProducts();
+        }
+
+        function updateAdditionalProduct(id, field, value) {
+            const product = calculatorData.additionalProducts.find(p => p.id === id);
+            if (product) {
+                product[field] = (field === 'name') ? value : parseFloat(value) || 0;
+            }
+        }
+
+        function addBBB() {
+            const newId = (calculatorData.bbbs.length > 0 ? Math.max(...calculatorData.bbbs.map(b => b.id)) : 0) + 1;
+            calculatorData.bbbs.push({ id: newId, name: '', cost: 0, driverName: '', units: 0 });
+            renderCosts();
+        }
+        function removeBBB(id) {
+            calculatorData.bbbs = calculatorData.bbbs.filter(b => b.id !== id);
+            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.bbbs[id]; });
+            renderCosts();
+        }
+        function updateBBB(id, field, value) {
+            const bbb = calculatorData.bbbs.find(b => b.id === id);
+            if (bbb) {
+                bbb[field] = ['name', 'driverName'].includes(field) ? value : parseFloat(value) || 0;
+            }
+        }
+
+        function addBTKL() {
+            const newId = (calculatorData.btkls.length > 0 ? Math.max(...calculatorData.btkls.map(b => b.id)) : 0) + 1;
+            calculatorData.btkls.push({ id: newId, name: '', cost: 0, driverName: '', hours: 0 });
+            renderCosts();
+        }
+        function removeBTKL(id) {
+            calculatorData.btkls = calculatorData.btkls.filter(b => b.id !== id);
+            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.btkls[id]; });
+            renderCosts();
+        }
+        function updateBTKL(id, field, value) {
+            const btkl = calculatorData.btkls.find(b => b.id === id);
+            if (btkl) {
+                btkl[field] = ['name', 'driverName'].includes(field) ? value : parseFloat(value) || 0;
             }
         }
 
@@ -411,43 +491,34 @@
             const alloc = calculatorData.allocations[productId];
             if (!alloc) return;
 
-            if (type === 'bbb' || type === 'btkl') {
-                alloc[type] = val;
+            if (type === 'bbb') {
+                if (!alloc.bbbs) alloc.bbbs = {};
+                alloc.bbbs[typeId] = val;
+            } else if (type === 'btkl') {
+                if (!alloc.btkls) alloc.btkls = {};
+                alloc.btkls[typeId] = val;
             } else { // BOP
                 if (!alloc.bop) alloc.bop = {};
                 alloc.bop[typeId] = val;
             }
         }
         
-        function updateCostData() {
-            calculatorData.bbb.name = document.getElementById('bbb-name').value;
-            calculatorData.bbb.cost = parseFloat(document.getElementById('bbb-cost').value) || 0;
-            calculatorData.bbb.units = parseFloat(document.getElementById('bbb-units').value) || 0;
-
-            calculatorData.btkl.name = document.getElementById('btkl-name').value;
-            calculatorData.btkl.cost = parseFloat(document.getElementById('btkl-cost').value) || 0;
-            calculatorData.btkl.hours = parseFloat(document.getElementById('btkl-hours').value) || 0;
-        }
-
-        /**
-         * LOGIC UPDATED: Calculation for BBB and BTKL rates is now based on total production units,
-         * matching the user's Excel file logic.
-         */
         function calculateHPP() {
             const results = [];
             const totalProductionUnits = calculatorData.products.reduce((sum, p) => sum + (p.volume || 0), 0);
 
-            // EXCEL'S METHOD: Rate is based on total production units for BBB and BTKL.
-            const bbbRate = (totalProductionUnits > 0) ? calculatorData.bbb.cost / totalProductionUnits : 0;
-            const btklRate = (totalProductionUnits > 0) ? calculatorData.btkl.cost / totalProductionUnits : 0;
+            const totalBBBCost = calculatorData.bbbs.reduce((sum, b) => sum + (b.cost || 0), 0);
+            const totalBTKLCost = calculatorData.btkls.reduce((sum, b) => sum + (b.cost || 0), 0);
+
+            const bbbAverageRate = (totalProductionUnits > 0) ? totalBBBCost / totalProductionUnits : 0;
+            const btklAverageRate = (totalProductionUnits > 0) ? totalBTKLCost / totalProductionUnits : 0;
             
-            // BOP calculation remains standard ABC (based on specific drivers).
             const bopRates = {};
             calculatorData.bop.forEach(b => {
                 bopRates[b.id] = (b.driverUnits > 0) ? b.cost / b.driverUnits : 0;
             });
 
-            let totalProductionCost = 0;
+            let grossTotalProductionCost = 0;
             let totalBBB = 0;
             let totalBTKL = 0;
             let totalBOP = 0;
@@ -456,15 +527,17 @@
                 const alloc = calculatorData.allocations[product.id];
                 if (!alloc) continue;
 
-                // The allocation value now acts as a multiplier for the averaged-out rate.
-                const bbbPerUnit = (alloc.bbb || 0) * bbbRate;
-                const btklPerUnit = (alloc.btkl || 0) * btklRate;
+                const totalBBBAllocationFactor = Object.values(alloc.bbbs || {}).reduce((sum, val) => sum + val, 0);
+                const totalBTKLAllocationFactor = Object.values(alloc.btkls || {}).reduce((sum, val) => sum + val, 0);
+
+                const bbbPerUnit = totalBBBAllocationFactor * bbbAverageRate;
+                const btklPerUnit = totalBTKLAllocationFactor * btklAverageRate;
                 
                 let bopPerUnit = 0;
-                for (const bopItem of calculatorData.bop) {
-                    const bopAllocValue = (alloc.bop && alloc.bop[bopItem.id]) ? alloc.bop[bopItem.id] : 0;
-                    bopPerUnit += bopAllocValue * bopRates[bopItem.id];
-                }
+                calculatorData.bop.forEach(b => {
+                    const consumption = (alloc.bop && alloc.bop[b.id]) ? alloc.bop[b.id] : 0;
+                    bopPerUnit += consumption * bopRates[b.id];
+                });
 
                 const hppPerUnit = bbbPerUnit + btklPerUnit + bopPerUnit;
                 const totalCostForProduct = hppPerUnit * (product.volume || 0);
@@ -484,16 +557,24 @@
                 totalBOP += bopPerUnit * (product.volume || 0);
             }
             
-            totalProductionCost = totalBBB + totalBTKL + totalBOP;
-            const avgHpp = totalProductionUnits > 0 ? totalProductionCost / totalProductionUnits : 0;
+            grossTotalProductionCost = totalBBB + totalBTKL + totalBOP;
             
-            const bbbPercentage = (totalProductionCost > 0) ? (totalBBB / totalProductionCost) * 100 : 0;
-            const btklPercentage = (totalProductionCost > 0) ? (totalBTKL / totalProductionCost) * 100 : 0;
-            const bopPercentage = (totalProductionCost > 0) ? (totalBOP / totalProductionCost) * 100 : 0;
+            const additionalProductsValue = calculatorData.additionalProducts.reduce((sum, p) => {
+                return sum + ((p.quantity || 0) * (p.price || 0));
+            }, 0);
+            const netTotalProductionCost = grossTotalProductionCost - additionalProductsValue;
+
+            const avgHpp = totalProductionUnits > 0 ? netTotalProductionCost / totalProductionUnits : 0;
+            
+            const bbbPercentage = (grossTotalProductionCost > 0) ? (totalBBB / grossTotalProductionCost) * 100 : 0;
+            const btklPercentage = (grossTotalProductionCost > 0) ? (totalBTKL / grossTotalProductionCost) * 100 : 0;
+            const bopPercentage = (grossTotalProductionCost > 0) ? (totalBOP / grossTotalProductionCost) * 100 : 0;
 
             return { 
                 results, 
-                totalProductionCost, 
+                totalProductionCost: netTotalProductionCost,
+                grossTotalProductionCost,
+                additionalProductsValue,
                 totalProductionUnits, 
                 avgHpp,
                 costStructure: { 
@@ -528,7 +609,7 @@
             `).join('');
 
             const chartContainer = document.getElementById('cost-structure-chart');
-            if (totalProductionCost > 0) {
+            if (costStructure.totalBBB + costStructure.totalBTKL + costStructure.totalBOP > 0) {
                 chartContainer.innerHTML = `
                 <div>
                     <div class="flex justify-between mb-1">
@@ -561,6 +642,65 @@
             } else {
                 chartContainer.innerHTML = '<p class="text-center text-gray-500">Data biaya belum cukup untuk menampilkan struktur biaya.</p>';
             }
+
+            const chartCanvas = document.getElementById('hpp-comparison-chart').getContext('2d');
+            const productLabels = results.map(r => r.name);
+            const hppData = results.map(r => r.hppPerUnit);
+
+            if (hppChart) {
+                hppChart.destroy(); 
+            }
+
+            hppChart = new Chart(chartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: productLabels,
+                    datasets: [{
+                        label: 'HPP per Unit (Rp)',
+                        data: hppData,
+                        backgroundColor: [
+                            'rgba(22, 163, 74, 0.6)',
+                            'rgba(37, 99, 235, 0.6)',
+                            'rgba(217, 119, 6, 0.6)',
+                            'rgba(220, 38, 38, 0.6)',
+                            'rgba(107, 114, 128, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(22, 163, 74, 1)',
+                            'rgba(37, 99, 235, 1)',
+                            'rgba(217, 119, 6, 1)',
+                            'rgba(220, 38, 38, 1)',
+                            'rgba(107, 114, 128, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` HPP: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function navigate(direction) {
@@ -569,7 +709,7 @@
 
             if (direction > 0) {
                  if (currentStep === 1) { renderCosts(); }
-                 if (currentStep === 2) { updateCostData(); renderAllocationTable(); }
+                 if (currentStep === 2) { renderAllocationTable(); }
                  if (currentStep === 3) { renderDashboard(); }
             }
 
@@ -615,14 +755,24 @@
         
         function initialize(isReset = false) {
             calculatorData = getInitialData();
-            renderProducts();
-            renderCosts();
-            renderAllocationTable();
-            renderDashboard();
+            
+            if (isReset || calculatorData.products.length === 0) {
+                addProduct();
+                addAdditionalProduct();
+                addBBB();
+                addBTKL();
+                addBOP();
+            } else {
+                renderProducts();
+                renderAdditionalProducts();
+                renderCosts();
+                renderAllocationTable();
+                renderDashboard();
+            }
         }
 
         function downloadExcel() {
-            const { results, totalProductionCost, totalProductionUnits, avgHpp, costStructure } = calculateHPP();
+            const { results, totalProductionCost, grossTotalProductionCost, additionalProductsValue, totalProductionUnits, avgHpp, costStructure } = calculateHPP();
             if (results.length === 0) {
                 alert("Tidak ada data untuk diunduh. Silakan lengkapi perhitungan terlebih dahulu.");
                 return;
@@ -632,9 +782,11 @@
             let ws_data = [];
 
             // --- Section 1: Summary ---
-            ws_data.push(['TOTAL BIAYA PRODUKSI', totalProductionCost]);
+            ws_data.push(['TOTAL BIAYA (Bruto)', grossTotalProductionCost]);
+            ws_data.push(['PENGURANG BIAYA (Produk Tambahan)', -additionalProductsValue]);
+            ws_data.push(['TOTAL BIAYA PRODUKSI (Neto)', totalProductionCost]);
             ws_data.push(['JUMLAH UNIT PRODUKSI', totalProductionUnits]);
-            ws_data.push(['HPP RATA-RATA', avgHpp]);
+            ws_data.push(['HPP RATA-RATA (Neto)', avgHpp]);
             ws_data.push([]); // Spacer
 
             // --- Section 2: Cost Structure ---
@@ -666,10 +818,12 @@
             // --- Formatting ---
             const rpFormat = '"Rp"#,##0.00';
             const percentFormat = '0.00%';
+            const unitFormat = '#,##0" unit"';
+            const rpParenthesesFormat = '"Rp"#,##0.00;"Rp("#,##0.00")"';
 
             // Column Widths
             ws['!cols'] = [
-                { wch: 30 }, // A
+                { wch: 35 }, // A
                 { wch: 18 }, // B
                 { wch: 18 }, // C
                 { wch: 18 }, // D
@@ -681,20 +835,25 @@
             // Apply formats
             // Section 1
             if(ws['B1']) ws['B1'].z = rpFormat;
+            if(ws['B2']) ws['B2'].z = rpParenthesesFormat;
             if(ws['B3']) ws['B3'].z = rpFormat;
+            if(ws['B4']) ws['B4'].z = unitFormat;
+            if(ws['B5']) ws['B5'].z = rpFormat;
             
             // Section 2
-            if(ws['B7']) ws['B7'].z = rpFormat;
-            if(ws['B8']) ws['B8'].z = rpFormat;
-            if(ws['B9']) ws['B9'].z = rpFormat;
-            if(ws['C7']) ws['C7'].z = percentFormat;
-            if(ws['C8']) ws['C8'].z = percentFormat;
-            if(ws['C9']) ws['C9'].z = percentFormat;
+            const structStartRow = 9;
+            if(ws[`B${structStartRow}`]) ws[`B${structStartRow}`].z = rpFormat;
+            if(ws[`B${structStartRow+1}`]) ws[`B${structStartRow+1}`].z = rpFormat;
+            if(ws[`B${structStartRow+2}`]) ws[`B${structStartRow+2}`].z = rpFormat;
+            if(ws[`C${structStartRow}`]) ws[`C${structStartRow}`].z = percentFormat;
+            if(ws[`C${structStartRow+1}`]) ws[`C${structStartRow+1}`].z = percentFormat;
+            if(ws[`C${structStartRow+2}`]) ws[`C${structStartRow+2}`].z = percentFormat;
 
             // Section 3
-            const reportStartRow = 13;
+            const reportStartRow = 15;
             results.forEach((r, index) => {
                 const row = reportStartRow + index;
+                if(ws[`B${row}`]) ws[`B${row}`].z = unitFormat;
                 if(ws[`C${row}`]) ws[`C${row}`].z = rpFormat;
                 if(ws[`D${row}`]) ws[`D${row}`].z = rpFormat;
                 if(ws[`E${row}`]) ws[`E${row}`].z = rpFormat;
