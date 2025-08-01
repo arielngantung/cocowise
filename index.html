@@ -44,12 +44,12 @@
     <header class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div class="w-full px-6 py-3 flex justify-between items-center">
             <a href="#">
-                <img src="img/Logo.png" alt="CocoCost Logo" class="h-12 md:h-16">
+                <img src="img/Logo1removbg.png" alt="CocoCost Logo" class="h-12 md:h-16">
             </a>
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="#" class="text-gray-600 hover:text-green-600">Home</a>
-                <a href="#" class="text-gray-600 hover:text-green-600">About</a>
-                <a href="#Kontak" class="text-gray-600 hover:text-green-600">Contact</a>
+                <a href="#About" class="text-gray-600 hover:text-green-600">About</a>
+                <a href="#Contact" class="text-gray-600 hover:text-green-600">Contact</a>
                 <a href="#" class="text-gray-600 hover:text-green-600">Panduan</a>
             </nav>
                     <!-- <div class="flex items-center"> -->
@@ -61,8 +61,8 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
             <a href="#" class="block py-2 text-gray-600 hover:text-green-600">Home</a>
-            <a href="#" class="block py-2 text-gray-600 hover:text-green-600">About</a>
-            <a href="#Kontak" class="block py-2 text-gray-600 hover:text-green-600">Contact</a>
+            <a href="#About" class="block py-2 text-gray-600 hover:text-green-600">About</a>
+            <a href="#Contact" class="block py-2 text-gray-600 hover:text-green-600">Contact</a>
             <a href="#" class="block py-2 text-gray-600 hover:text-green-600">Panduan</a>
             
         </div>
@@ -110,11 +110,11 @@
         </section>
 
         <!-- About Section -->
-        <section class="py-20 overflow-hidden">
+        <section class="py-20 overflow-hidden" id="About">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div data-aos="fade-right">
-                        <img src="https://th.bing.com/th/id/OIP.bz4-HuVnJSAXBpXoZVhM2wHaEJ?w=272&h=180&c=7&r=0&o=7&dpr=1.4&pid=1.7&rm=3" alt="Kalkulator dan catatan keuangan" class="rounded-lg shadow-xl w-full">
+                        <img src="https://thumbs.dreamstime.com/b/calculator-notebook-pen-wooden-table-31784795.jpg" alt="Kalkulator dan catatan keuangan" class="rounded-lg shadow-xl w-full">
                     </div>
                     <div class="bg-green-200 p-8 rounded-lg" data-aos="fade-left">
                         <h2 class="text-3xl font-bold text-green-800">APA ITU COCOWISE?</h2>
@@ -124,34 +124,33 @@
             </div>
         </section>
 
-        <!-- Dashboard Showcase -->
-        <section class="bg-green-700 py-10 overflow-hidden">
-            <div class="container mx-auto px-6">
-                 <div class="grid md:grid-cols-5 gap-12 items-center">
-                    <div class="md:col-span-3" data-aos="zoom-in-right">
-                        <img src="https://www.thehotskills.com/wp-content/uploads/2018/11/Dashor-Responsive-Admin-Dashboard.jpg" alt="Contoh tampilan dashboard aplikasi" class="rounded-lg shadow-xl w-full">
-                        <div class="mt-8 grid grid-cols-3 gap-4 text-center">
-                            <div class="bg-green-800 p-4 rounded-lg shadow-inner">
-                                <p class="text-sm text-green-200">Biaya Bahan Baku</p>
-                                <p class="font-bold text-xl text-white">Rp. 100.000</p>
-                            </div>
-                             <div class="bg-green-800 p-4 rounded-lg shadow-inner">
-                                <p class="text-sm text-green-200">Biaya Tenaga Kerja</p>
-                                <p class="font-bold text-xl text-white">Rp. 75.000</p>
-                            </div>
-                             <div class="bg-green-800 p-4 rounded-lg shadow-inner">
-                                <p class="text-sm text-green-200">Biaya Overhead</p>
-                                <p class="font-bold text-xl text-white">Rp. 50.000</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 h-full hidden md:block" data-aos="fade-left">
-                        <img src="img/Petani.jpg" 
-                        alt="Petani kelapa sedang bekerja" class="rounded-lg shadow-xl w-full h-full object-cover">
-                    </div>
+         <!-- Dashboard Showcase -->
+    <section class="bg-green-700 py-20 overflow-hidden">
+        <div class="container mx-auto px-6">
+            <!-- Section Title -->
+            <div class="text-center mb-12" data-aos="fade-down">
+                <h2 class="text-4xl lg:text-4xl font-bold text-white">Data Penghasil Kelapa Terbesar di Sulawesi Utara</h2>
+            </div>
+            
+            <!-- Images Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                <!-- Image 1: Data Table -->
+                <div data-aos="fade-right" class="flex">
+                    <img src="img/Data.jpg" 
+                         alt="Tabel data daerah penghasil kelapa terbesar di Sulawesi Utara" 
+                         class="rounded-lg shadow-xl w-full h-full object-cover"
+                         onerror="this.onerror=null;this.src='https://placehold.co/800x600/15803d/FFFFFF?text=Gagal+Memuat+Gambar';">
+                </div>
+                <!-- Image 2: Chart -->
+                <div data-aos="fade-left" class="flex bg-white rounded-lg shadow-xl p-4">
+                    <img src="img/Chart.jpg" 
+                         alt="Grafik batang perbandingan data kelapa tahun 2023 dan 2024" 
+                         class="rounded-lg w-full h-full object-contain"
+                         onerror="this.onerror=null;this.src='https://placehold.co/800x600/FFFFFF/000000?text=Gagal+Memuat+Gambar';">
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
         <!-- CTA Section 1 -->
         <section class="py-20 overflow-hidden">
@@ -184,42 +183,60 @@
 
     </main>
 
-    <!-- Footer -->
-     
-    <footer class="bg-gray-800 text-white pt-16 pb-8">
-        <div class="container mx-auto px-6" data-aos="fade-up">
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Search and Social -->
+       <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                
+                <!-- Column 1: Brand and About -->
+                <div class="sm:col-span-2 md:col-span-1">
+                    <h3 class="font-bold text-xl text-white">CocoWise</h3>
+                    <p class="mt-4 text-gray-400 text-sm">
+                        Platform terdepan untuk informasi dan inovasi seputar kelapa di Sulawesi Utara.
+                    </p>
+                </div>
+
+                <!-- Column 2: Quick Links -->
                 <div>
-                    <h3 class="font-bold text-lg">TEMUKAN KAMI</h3>
-                    <div class="relative mt-4">
-                        <input type="text" placeholder="Cari..." class="w-full bg-gray-700 text-white rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <button class="absolute right-0 top-0 mt-2 mr-3">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
-                    </div>
-                    <div class="flex space-x-4 mt-6">
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.485 2.465c.636-.247 1.363-.416 2.427-.465C9.93 2.013 10.284 2 12.315 2zm0 1.623c-2.403 0-2.73.01-3.685.056-.94.043-1.51.198-1.92.362-.435.172-.748.398-1.074.724-.325.325-.552.639-.724 1.074-.164.41-.32 1.01-.363 1.92-.045.955-.056 1.282-.056 3.685s.011 2.73.056 3.685c.043.91.198 1.51.363 1.92.172.435.398.748.724 1.074.325.325.639.552 1.074.724.41.164 1.01.32 1.92.363.955.045 1.282.056 3.685.056s2.73-.011 3.685-.056c.91-.043 1.51-.198 1.92-.363.435-.172.748-.398 1.074-.724.325-.325.552.639-.724-1.074.164-.41.32-1.01.363-1.92.045-.955.056-1.282.056-3.685s-.011-2.73-.056-3.685c-.043-.91-.198-1.51-.363-1.92-.172-.435-.398-.748-.724-1.074-.325-.325-.639-.552-1.074-.724-.41-.164-1.01-.32-1.92-.363-.955-.045-1.282-.056-3.685-.056zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.652a3.517 3.517 0 110-7.034 3.517 3.517 0 010 7.034zM16.862 6.205a1.232 1.232 0 100 2.464 1.232 1.232 0 000-2.464z" clip-rule="evenodd"></path></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.46 6c-.77.35-1.6.58-2.46.67.88-.53 1.56-1.37 1.88-2.38-.83.49-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.27 0 .34.04.67.11.98-3.56-.18-6.72-1.88-8.84-4.48-.37.63-.58 1.37-.58 2.15 0 1.48.75 2.79 1.9 3.55-.7-.02-1.36-.21-1.94-.54v.05c0 2.07 1.47 3.8 3.42 4.19-.36.1-.73.15-1.12.15-.27 0-.54-.03-.79-.08.54 1.69 2.11 2.93 3.97 2.96-1.46 1.14-3.3 1.82-5.3 1.82-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21c7.35 0 11.37-6.08 11.37-11.37 0-.17 0-.34-.01-.51.78-.57 1.45-1.28 1.98-2.08z"></path></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path></svg></a>
+                    <h3 class="font-semibold text-lg text-white">Tautan</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="#About" class="text-gray-400 hover:text-white transition-colors">Tentang Kami</a></li>
+                        <li><a href="Kalkulator.html" class="text-gray-400 hover:text-white transition-colors">Produk</a></li>
+                        <li><a href="#Contact" class="text-gray-400 hover:text-white transition-colors">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Contact Info -->
+                <div id="Contact">
+                    <h3 class="font-semibold text-lg text-white">Hubungi Kami</h3>
+                    <div class="mt-4 space-y-2 text-sm text-gray-400">
+                        <p>Jl. Raya Politeknik, Kairagi Weru, Manado, Indonesia</p>
+                        <p>Email: <a href="mailto:cocowise@gmail.com" class="hover:text-white transition-colors">cocowise@gmail.com</a></p>
+                        <p>Website: <a href="https://arielngantung.github.io/cocowise/" class="hover:text-white transition-colors">cocowise.id</a></p>
                     </div>
                 </div>
 
-                <!-- Contact Info -->
-                 <div id="Kontak" class="Contact">
-                <div class="md:col-span-2">
-                    <h3 id="Contact" class="font-bold text-lg">HUBUNGI KAMI</h3>
-                    <div class="mt-4 space-y-2 text-gray-400">
-                        <p><strong>CocoWise</strong></p>
-                        <p>Jl. Raya Politeknik, Kel. Kairagi Weru, Kec. Mapanget, Kota Manado, Sulawesi Utara, Indonesia</p>
-                        <p>Email: cocowise@gmail.com</p>
-                        <p>Website: https://arielngantung.github.io/cocowise/</p>
-                    </div>
+                <!-- Column 4: Social Media -->
+                <div>
+                    <h3 class="font-semibold text-lg text-white">Media Sosial</h3>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.485 2.465c.636-.247 1.363-.416 2.427-.465C9.93 2.013 10.284 2 12.315 2zm0 1.623c-2.403 0-2.73.01-3.685.056-.94.043-1.51.198-1.92.362-.435.172-.748.398-1.074.724-.325.325-.552.639-.724 1.074-.164.41-.32 1.01-.363 1.92-.045.955-.056 1.282-.056 3.685s.011 2.73.056 3.685c.043.91.198 1.51.363 1.92.172.435.398.748.724 1.074.325.325.639.552 1.074.724.41.164 1.01.32 1.92.363.955.045 1.282.056 3.685.056s2.73-.011 3.685-.056c.91-.043 1.51-.198 1.92-.363.435-.172.748-.398 1.074-.724.325-.325.552.639.724-1.074.164-.41.32-1.01.363-1.92.045-.955.056-1.282.056-3.685s-.011-2.73-.056-3.685c-.043-.91-.198-1.51-.363-1.92-.172-.435-.398-.748-.724-1.074-.325-.325-.639-.552-1.074-.724-.41-.164-1.01-.32-1.92-.363-.955-.045-1.282-.056-3.685-.056zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.652a3.517 3.517 0 110-7.034 3.517 3.517 0 010 7.034zM16.862 6.205a1.232 1.232 0 100 2.464 1.232 1.232 0 000-2.464z" clip-rule="evenodd"></path></svg>
+                        </a>
+                       <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.78 22 12 22 12s0 3.22-.42 4.814a2.506 2.506 0 0 1-1.768 1.768c-1.594.42-7.812.42-7.812.42s-6.218 0-7.812-.42a2.506 2.506 0 0 1-1.768-1.768C2 15.22 2 12 2 12s0-3.22.42-4.814a2.506 2.506 0 0 1 1.768-1.768C5.782 5 12 5 12 5s6.218 0 7.812.418zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" clip-rule="evenodd"></path></svg>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500 text-sm">
-                <p>&copy; 2025 CocoWise. All rights reserved.</p>
+
+            <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2025 CocoWise. Hak Cipta Dilindungi.</p>
+                <!-- <div class="flex space-x-4 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+                    <a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
+                </div> -->
             </div>
         </div>
     </footer>
