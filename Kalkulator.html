@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Pustaka untuk membuat file Excel -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- Pustaka untuk membuat file Excel dengan Gaya (xlsx-js-style) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style/dist/xlsx.bundle.js"></script>
     <!-- Pustaka untuk membuat Grafik (Chart.js) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -59,7 +59,10 @@
      <header class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div class="w-full px-6 py-3 flex justify-between items-center">
             <a href="#">
-                <img src="img/Logo1removbg.png" alt="CocoCost Logo" class="h-12 md:h-16">
+                <!-- Img tag is intentionally left empty as requested -->
+                <div class="h-12 md:h-16 flex items-center font-bold text-xl text-green-700">
+                    CocoCost
+                </div>
             </a>
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="index.html" class="text-gray-600 hover:text-green-600">Home</a>
@@ -67,11 +70,10 @@
                 <a href="Kalkulator.html" class="text-gray-600 hover:text-green-600">Contact</a>
                 <a href="#" class="text-gray-600 hover:text-green-600">Panduan</a>
             </nav>
-                        <!-- MobileMenuBtn -->
-                    <button id="mobile-menu-button" class="md:hidden ml-4 text-gray-800">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                     </button>
-                </div>
+            <!-- MobileMenuBtn -->
+            <button id="mobile-menu-button" class="md:hidden ml-4 text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
@@ -79,7 +81,6 @@
             <a href="index.html" class="block py-2 text-gray-600 hover:text-green-600">About</a>
             <a href="index.html#Kontak" class="block py-2 text-gray-600 hover:text-green-600">Contact</a>
             <a href="#" class="block py-2 text-gray-600 hover:text-green-600">Panduan</a>
-            
         </div>
     </header>
 
@@ -150,7 +151,7 @@
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Tenaga Kerja Langsung (BTKL)</h3>
                     <div id="btkl-list" class="space-y-4"></div>
-                     <button onclick="addBTKL()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                    <button onclick="addBTKL()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
                         + Tambah Pekerjaan BTKL
                     </button>
                 </div>
@@ -205,7 +206,7 @@
                     <div id="cost-structure-chart" class="space-y-4 p-4 bg-gray-50 rounded-lg"></div>
                 </div>
 
-                    <div id="hpp-comparison-section" class="mt-8">
+                <div id="hpp-comparison-section" class="mt-8">
                     <h3 class="text-xl font-semibold mb-4 text-gray-700">Perbandingan HPP per Unit Produk</h3>
                     <div class="p-4 bg-gray-50 rounded-lg">
                         <canvas id="hpp-comparison-chart"></canvas>
@@ -722,6 +723,10 @@
             }
 
             currentStep = newStep;
+            document.getElementById(`step-1`).classList.remove('active');
+            document.getElementById(`step-2`).classList.remove('active');
+            document.getElementById(`step-3`).classList.remove('active');
+            document.getElementById(`step-4`).classList.remove('active');
             document.getElementById(`step-${currentStep}`).classList.add('active');
             document.getElementById(`step-indicator-${currentStep}`).classList.add('active');
             updateNavButtons();
@@ -771,88 +776,142 @@
             }
         }
 
-        function downloadExcel() {
-            const { results, totalProductionCost, grossTotalProductionCost, additionalProductsValue, totalProductionUnits, avgHpp, costStructure } = calculateHPP();
-            if (results.length === 0) {
-                alert("Tidak ada data untuk diunduh. Silakan lengkapi perhitungan terlebih dahulu.");
-                return;
-            }
+        // --- Function to create styled Excel report ---
+        function createStyledReport(data) {
+            // --- 1. Define Styles ---
+            const titleStyle = {
+                font: { name: 'Calibri', sz: 16, bold: true },
+                alignment: { horizontal: 'center', vertical: 'center' }
+            };
+            const sectionHeaderStyle = {
+                font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: "000000" } },
+                fill: { fgColor: { rgb: "D9D2E9" } }, // Light Purple Fill
+                alignment: { horizontal: 'center', vertical: 'center' }
+            };
+            const plainColumnHeaderStyle = {
+                font: { name: 'Calibri', sz: 11, bold: true },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                border: {
+                    top: { style: 'thin' }, bottom: { style: 'thin' },
+                    left: { style: 'thin' }, right: { style: 'thin' }
+                }
+            };
+            const dataCellStyle = {
+                border: {
+                    top: { style: 'thin' }, bottom: { style: 'thin' },
+                    left: { style: 'thin' }, right: { style: 'thin' }
+                },
+                alignment: { vertical: 'center' }
+            };
+            const centeredDataCellStyle = {
+                ...dataCellStyle,
+                alignment: { horizontal: 'center', vertical: 'center' }
+            };
+            const labelCellStyle = { ...dataCellStyle, font: { bold: false } };
+            // FIXED: New styles for bold cells
+            const boldLabelCellStyle = { ...dataCellStyle, font: { bold: true } };
+            const boldDataCellStyle = { ...dataCellStyle, font: { bold: true } };
 
-            const wb = XLSX.utils.book_new();
-            let ws_data = [];
 
-            // --- Section 1: Summary ---
-            ws_data.push(['TOTAL BIAYA (Bruto)', grossTotalProductionCost]);
-            ws_data.push(['PENGURANG BIAYA (Produk Tambahan)', -additionalProductsValue]);
-            ws_data.push(['TOTAL BIAYA PRODUKSI (Neto)', totalProductionCost]);
-            ws_data.push(['JUMLAH UNIT PRODUKSI', totalProductionUnits]);
-            ws_data.push(['HPP RATA-RATA (Neto)', avgHpp]);
-            ws_data.push([]); // Spacer
+            // --- 2. Define Number Formats ---
+            const rpFormat = 'Rp#,##0.00';
+            const unitFormat = '#,##0" unit"';
+            const percentFormat = '0.00%';
+            const rpParenthesesFormat = 'Rp#,##0.00;"Rp("#,##0.00")"';
 
-            // --- Section 2: Cost Structure ---
-            ws_data.push(['STRUKTUR BIAYA PRODUKSI']);
-            ws_data.push(['Komponen Biaya', 'Total Biaya', 'Persentase']);
-            ws_data.push(['Biaya Bahan Baku (BBB)', costStructure.totalBBB, costStructure.bbbPercentage / 100]);
-            ws_data.push(['Biaya Tenaga Kerja (BTKL)', costStructure.totalBTKL, costStructure.btklPercentage / 100]);
-            ws_data.push(['Biaya Overhead (BOP)', costStructure.totalBOP, costStructure.bopPercentage / 100]);
-            ws_data.push([]); // Spacer
+            // --- 3. Prepare Data for Worksheet ---
+            const { results, totalProductionCost, grossTotalProductionCost, additionalProductsValue, totalProductionUnits, avgHpp, costStructure } = data;
 
-            // --- Section 3: HPP Report ---
-            ws_data.push(['LAPORAN HARGA POKOK PRODUKSI']);
-            const header = ['Produk', 'Volume', 'BBB/Unit', 'BTKL/Unit', 'BOP/Unit', 'HPP/Unit', 'Total Biaya'];
-            ws_data.push(header);
+            const ws_data = [
+                [], // Row 1 (empty)
+                ['', 'HASIL AKHIR PERHITUNGAN HARGA POKOK PRODUKSI'], 
+                [], 
+                ['TOTAL BIAYA (Bruto)', grossTotalProductionCost], 
+                ['PENGURANG BIAYA (Produk Tambahan)', -additionalProductsValue], 
+                ['TOTAL BIAYA PRODUKSI (Neto)', totalProductionCost], 
+                ['JUMLAH UNIT PRODUKSI', totalProductionUnits], 
+                ['HPP RATA-RATA (Neto)', avgHpp], 
+                [], [], 
+                ['STRUKTUR BIAYA PRODUKSI'], 
+                ['Komponen Biaya', 'Total Biaya', 'Persentase'], 
+                ['Biaya Bahan Baku (BBB)', costStructure.totalBBB, costStructure.bbbPercentage / 100], 
+                ['Biaya Tenaga Kerja (BTKL)', costStructure.totalBTKL, costStructure.btklPercentage / 100], 
+                ['Biaya Overhead (BOP)', costStructure.totalBOP, costStructure.bopPercentage / 100], 
+                [], [], 
+                ['LAPORAN HARGA POKOK PRODUKSI'], 
+                ['Produk', 'Volume', 'BBB/Unit', 'BTKL/Unit', 'BOP/Unit', 'HPP/Unit', 'Total Biaya']
+            ];
+            
             results.forEach(r => {
-                ws_data.push([
-                    r.name,
-                    r.volume,
-                    r.bbbPerUnit,
-                    r.btklPerUnit,
-                    r.bopPerUnit,
-                    r.hppPerUnit,
-                    r.totalCost
-                ]);
+                ws_data.push([r.name, r.volume, r.bbbPerUnit, r.btklPerUnit, r.bopPerUnit, r.hppPerUnit, r.totalCost]);
             });
 
+            // --- 4. Create Worksheet and Apply Styles ---
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-            // --- Formatting ---
-            const rpFormat = '"Rp"#,##0.00';
-            const percentFormat = '0.00%';
-            const unitFormat = '#,##0" unit"';
-            const rpParenthesesFormat = '"Rp"#,##0.00;"Rp("#,##0.00")"';
-
-            // Column Widths
-            ws['!cols'] = [
-                { wch: 35 }, // A
-                { wch: 18 }, // B
-                { wch: 18 }, // C
-                { wch: 18 }, // D
-                { wch: 18 }, // E
-                { wch: 18 }, // F
-                { wch: 20 }  // G
+            ws['!cols'] = [ { wch: 35 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 } ];
+            ws['!merges'] = [
+                { s: { r: 1, c: 1 }, e: { r: 1, c: 6 } }, 
+                { s: { r: 10, c: 0 }, e: { r: 10, c: 2 } }, 
+                { s: { r: 17, c: 0 }, e: { r: 17, c: 6 } }  
             ];
 
-            // Apply formats
-            // Section 1
-            if(ws['B1']) ws['B1'].z = rpFormat;
-            if(ws['B2']) ws['B2'].z = rpParenthesesFormat;
-            if(ws['B3']) ws['B3'].z = rpFormat;
-            if(ws['B4']) ws['B4'].z = unitFormat;
-            if(ws['B5']) ws['B5'].z = rpFormat;
-            
-            // Section 2
-            const structStartRow = 9;
-            if(ws[`B${structStartRow}`]) ws[`B${structStartRow}`].z = rpFormat;
-            if(ws[`B${structStartRow+1}`]) ws[`B${structStartRow+1}`].z = rpFormat;
-            if(ws[`B${structStartRow+2}`]) ws[`B${structStartRow+2}`].z = rpFormat;
-            if(ws[`C${structStartRow}`]) ws[`C${structStartRow}`].z = percentFormat;
-            if(ws[`C${structStartRow+1}`]) ws[`C${structStartRow+1}`].z = percentFormat;
-            if(ws[`C${structStartRow+2}`]) ws[`C${structStartRow+2}`].z = percentFormat;
+            // Apply styles and formats
+            ws['B2'].s = titleStyle;
+            ws['A11'].s = sectionHeaderStyle;
+            ws['A18'].s = sectionHeaderStyle;
 
-            // Section 3
-            const reportStartRow = 15;
+            ['A12', 'B12', 'C12'].forEach(key => { if(ws[key]) ws[key].s = plainColumnHeaderStyle; });
+            ['A19', 'B19', 'C19', 'D19', 'E19', 'F19', 'G19'].forEach(key => { if(ws[key]) ws[key].s = plainColumnHeaderStyle; });
+
+            // Loop through data rows to apply borders and formats
+            for (let R = 3; R <= 7; ++R) { // Summary Section (NO COLOR)
+                if(ws[`A${R+1}`]) ws[`A${R+1}`].s = labelCellStyle;
+                if(ws[`B${R+1}`]) ws[`B${R+1}`].s = dataCellStyle;
+            }
+            for (let R = 12; R <= 14; ++R) { // Cost Structure Section
+                ['A', 'B', 'C'].forEach(C => {
+                    const cell = ws[`${C}${R+1}`];
+                    if(cell) cell.s = (C === 'A') ? labelCellStyle : dataCellStyle;
+                });
+            }
+            // Apply centered style to report data
+            for (let R = 19; R < ws_data.length; ++R) { // Report Section
+                ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(C => {
+                    const cell_address = `${C}${R + 1}`;
+                    const cell = ws[cell_address];
+                    if (cell) {
+                        if (C === 'A') {
+                            cell.s = labelCellStyle; // Column A remains left-aligned
+                        } else {
+                            cell.s = centeredDataCellStyle; // Columns B-G are centered
+                        }
+                    }
+                });
+            }
+
+            // FIXED: Apply bold style to specific summary rows
+            if(ws['A6']) ws['A6'].s = boldLabelCellStyle;
+            if(ws['B6']) ws['B6'].s = boldDataCellStyle;
+            if(ws['A8']) ws['A8'].s = boldLabelCellStyle;
+            if(ws['B8']) ws['B8'].s = boldDataCellStyle;
+
+            // Apply Number Formats
+            if(ws['B4']) ws['B4'].z = rpFormat;
+            if(ws['B5']) ws['B5'].z = rpParenthesesFormat;
+            if(ws['B6']) ws['B6'].z = rpFormat;
+            if(ws['B7']) ws['B7'].z = unitFormat;
+            if(ws['B8']) ws['B8'].z = rpFormat;
+            
+            if(ws['B13']) ws['B13'].z = rpFormat;
+            if(ws['B14']) ws['B14'].z = rpFormat;
+            if(ws['B15']) ws['B15'].z = rpFormat;
+            if(ws['C13']) ws['C13'].z = percentFormat;
+            if(ws['C14']) ws['C14'].z = percentFormat;
+            if(ws['C15']) ws['C15'].z = percentFormat;
+
             results.forEach((r, index) => {
-                const row = reportStartRow + index;
+                const row = 20 + index;
                 if(ws[`B${row}`]) ws[`B${row}`].z = unitFormat;
                 if(ws[`C${row}`]) ws[`C${row}`].z = rpFormat;
                 if(ws[`D${row}`]) ws[`D${row}`].z = rpFormat;
@@ -861,8 +920,19 @@
                 if(ws[`G${row}`]) ws[`G${row}`].z = rpFormat;
             });
 
-            XLSX.utils.book_append_sheet(wb, ws, "Laporan HPP");
-            XLSX.writeFile(wb, "Laporan_HPP.xlsx");
+            return ws;
+        }
+
+        function downloadExcel() {
+            const calculatedData = calculateHPP();
+            if (calculatedData.results.length === 0) {
+                alert("Tidak ada data untuk diunduh. Silakan lengkapi perhitungan terlebih dahulu.");
+                return;
+            }
+            const newWorksheet = createStyledReport(calculatedData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, newWorksheet, "Laporan HPP");
+            XLSX.writeFile(wb, "Laporan_HPP_Styled.xlsx");
         }
 
         window.onload = initialize;
