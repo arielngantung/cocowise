@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator HPP - Sesuai Metode Excel</title>
+    <title>Kalkulator HPP - Sesuai Metode Excel (Versi Modifikasi)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,11 +51,17 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
+        .product-cost-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Header -->
+   <!-- Header -->
      <header class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div class="w-full px-6 py-3 flex justify-between items-center">
            <a href="#">
@@ -102,7 +108,7 @@
                 <div class="flex-auto border-t-2 border-gray-300 mx-4"></div>
                 <div class="flex items-center flex-col md:flex-row">
                     <div id="step-indicator-3" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 font-bold">3</div>
-                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Alokasi</p>
+                    <p class="ml-0 md:ml-2 mt-1 md:mt-0 text-sm md:text-base">Alokasi BOP</p>
                 </div>
                 <div class="flex-auto border-t-2 border-gray-300 mx-4"></div>
                 <div class="flex items-center flex-col md:flex-row">
@@ -124,7 +130,7 @@
                 </button>
                 
                 <div class="mt-8 pt-6 border-t">
-                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Produk Tambahan (Pengurang Biaya)</h3>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Produk Sampingan (By Product)</h3>
                     <p class="text-sm text-gray-600 mb-4">Masukkan produk sampingan atau tambahan yang nilainya akan mengurangi total biaya produksi.</p>
                     <div id="additional-product-list"></div>
                     <button onclick="addAdditionalProduct()" class="mt-4 w-full bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200 transition">
@@ -137,36 +143,31 @@
         <!-- Step 2: Biaya Langsung & Overhead -->
         <section id="step-2" class="form-section">
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Input Total Biaya Produksi</h2>
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Bahan Baku (BBB)</h3>
-                    <div id="bbb-list" class="space-y-4"></div>
-                    <button onclick="addBBB()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
-                        + Tambah Bahan Baku
-                    </button>
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 2: Input Biaya Produksi</h2>
+                
+                <!-- Biaya Langsung per Produk -->
+                <div id="direct-cost-container">
+                    <!-- Dinamis diisi oleh JS -->
                 </div>
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Tenaga Kerja Langsung (BTKL)</h3>
-                    <div id="btkl-list" class="space-y-4"></div>
-                    <button onclick="addBTKL()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
-                        + Tambah Pekerjaan BTKL
-                    </button>
-                </div>
-                <div class="mb-6">
+
+                <!-- Biaya Overhead Pabrik (BOP) -->
+                <div class="mt-8 pt-6 border-t">
                     <h3 class="text-xl font-semibold mb-2 text-gray-700">Biaya Overhead Pabrik (BOP)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Masukkan biaya bersama yang tidak bisa dibebankan langsung ke produk.</p>
                     <div id="bop-list" class="space-y-4"></div>
-                    <button onclick="addBOP()" class="mt-4 w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 transition">
+                    <button onclick="addBOP()" class="mt-4 w-full bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg hover:bg-purple-200 transition">
                         + Tambah Aktivitas BOP
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Step 3: Alokasi Biaya -->
+
+        <!-- Step 3: Alokasi Biaya Overhead -->
         <section id="step-3" class="form-section">
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 3: Alokasikan Biaya ke Setiap Produk</h2>
-                <p class="text-sm text-gray-600 mb-4">Isi berapa banyak sumber daya yang dikonsumsi oleh <strong>satu unit</strong> dari setiap produk.</p>
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Langkah 3: Alokasikan Biaya Overhead Pabrik (BOP)</h2>
+                <p class="text-sm text-gray-600 mb-4">Isi berapa banyak sumber daya BOP yang dikonsumsi oleh <strong>satu unit</strong> dari setiap produk.</p>
                 <div id="allocation-table-container" class="overflow-x-auto"></div>
             </div>
         </section>
@@ -185,7 +186,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center">
                     <div class="bg-green-50 p-4 rounded-lg">
-                        <h4 class="text-sm font-semibold text-green-800">TOTAL BIAYA PRODUKSI</h4>
+                        <h4 class="text-sm font-semibold text-green-800">TOTAL BIAYA PRODUKSI (NETO)</h4>
                         <p id="dashboard-total-cost" class="text-2xl font-bold text-green-900">Rp 0</p>
                     </div>
                     <div class="bg-blue-50 p-4 rounded-lg">
@@ -221,7 +222,7 @@
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BTKL/Unit</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BOP/Unit</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">HPP/Unit</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Biaya</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Biaya Produk</th>
                                 </tr>
                             </thead>
                             <tbody id="dashboard-table-body" class="bg-white divide-y divide-gray-200"></tbody>
@@ -260,26 +261,49 @@
             return {
                 products: [],
                 additionalProducts: [],
-                bbbs: [],
-                btkls: [],
                 bop: [],
                 allocations: {}
             };
         }
-
+        
+        // --- STEP 1: PRODUK ---
         function renderProducts() {
             const list = document.getElementById('product-list');
             if (calculatorData.products.length === 0) {
                 list.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada produk utama. Silakan tambahkan.</p>';
-                return;
+            } else {
+                list.innerHTML = calculatorData.products.map(p => `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2 items-center p-2 border-b" id="product-${p.id}">
+                        <input type="text" value="${p.name}" onchange="updateProduct(${p.id}, 'name', this.value)" placeholder="Nama Produk" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <input type="number" value="${p.volume || ''}" onchange="updateProduct(${p.id}, 'volume', this.value)" placeholder="Volume Produksi" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <button onclick="removeProduct(${p.id})" class="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition text-sm">Hapus</button>
+                    </div>
+                `).join('');
             }
-            list.innerHTML = calculatorData.products.map(p => `
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2 items-center p-2 border-b" id="product-${p.id}">
-                    <input type="text" value="${p.name}" onchange="updateProduct(${p.id}, 'name', this.value)" placeholder="Nama Produk" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                    <input type="number" value="${p.volume || ''}" onchange="updateProduct(${p.id}, 'volume', this.value)" placeholder="Volume Produksi" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                    <button onclick="removeProduct(${p.id})" class="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition text-sm">Hapus</button>
-                </div>
-            `).join('');
+            renderDirectCosts(); // Re-render step 2 if products change
+        }
+
+        function addProduct() {
+            const newId = (calculatorData.products.length > 0 ? Math.max(...calculatorData.products.map(p => p.id)) : 0) + 1;
+            calculatorData.products.push({ id: newId, name: '', volume: 0, bbbs: [], btkls: [] });
+            calculatorData.allocations[newId] = {};
+            renderProducts();
+        }
+
+        function removeProduct(id) {
+            calculatorData.products = calculatorData.products.filter(p => p.id !== id);
+            delete calculatorData.allocations[id];
+            renderProducts();
+        }
+
+        function updateProduct(id, field, value) {
+            const product = calculatorData.products.find(p => p.id === id);
+            if (product) {
+                product[field] = (field === 'name') ? value : parseFloat(value) || 0;
+            }
+             if (field === 'name') {
+                renderDirectCosts(); // Re-render product names in Step 2
+            }
         }
         
         function renderAdditionalProducts() {
@@ -296,121 +320,6 @@
                     <button onclick="removeAdditionalProduct(${p.id})" class="bg-red-100 text-red-700 px-3 py-2 rounded-md hover:bg-red-200 transition text-sm">Hapus</button>
                 </div>
             `).join('');
-        }
-
-        function renderCosts() {
-            const bbbList = document.getElementById('bbb-list');
-            if (calculatorData.bbbs.length === 0) {
-                bbbList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada bahan baku. Silakan tambahkan.</p>';
-            } else {
-                bbbList.innerHTML = calculatorData.bbbs.map(b => `
-                    <div class="p-4 border rounded-lg" id="bbb-${b.id}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" value="${b.name}" onchange="updateBBB(${b.id}, 'name', this.value)" placeholder="Nama Bahan Baku" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.cost || ''}" onchange="updateBBB(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="text" value="${b.driverName}" onchange="updateBBB(${b.id}, 'driverName', this.value)" placeholder="Unit Driver (cth: kg, liter)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.units || ''}" onchange="updateBBB(${b.id}, 'units', this.value)" placeholder="Total Unit Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                         <button onclick="removeBBB(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Bahan Baku</button>
-                    </div>
-                `).join('');
-            }
-
-            const btklList = document.getElementById('btkl-list');
-            if (calculatorData.btkls.length === 0) {
-                btklList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada pekerjaan. Silakan tambahkan.</p>';
-            } else {
-                btklList.innerHTML = calculatorData.btkls.map(b => `
-                    <div class="p-4 border rounded-lg" id="btkl-${b.id}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" value="${b.name}" onchange="updateBTKL(${b.id}, 'name', this.value)" placeholder="Jenis Pekerjaan" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.cost || ''}" onchange="updateBTKL(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="text" value="${b.driverName}" onchange="updateBTKL(${b.id}, 'driverName', this.value)" placeholder="Unit Driver (cth: Jam Kerja)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.hours || ''}" onchange="updateBTKL(${b.id}, 'hours', this.value)" placeholder="Total Unit Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                         <button onclick="removeBTKL(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Pekerjaan</button>
-                    </div>
-                `).join('');
-            }
-
-            const bopList = document.getElementById('bop-list');
-             if (calculatorData.bop.length === 0) {
-                bopList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada aktivitas BOP. Silakan tambahkan.</p>';
-            } else {
-                bopList.innerHTML = calculatorData.bop.map(b => `
-                    <div class="p-4 border rounded-lg" id="bop-${b.id}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" value="${b.name}" onchange="updateBOP(${b.id}, 'name', this.value)" placeholder="Nama Aktivitas BOP" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.cost || ''}" onchange="updateBOP(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="text" value="${b.driverName}" onchange="updateBOP(${b.id}, 'driverName', this.value)" placeholder="Nama Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                            <input type="number" value="${b.driverUnits || ''}" onchange="updateBOP(${b.id}, 'driverUnits', this.value)" placeholder="Jumlah Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                        </div>
-                         <button onclick="removeBOP(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Aktivitas</button>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        function renderAllocationTable() {
-            const container = document.getElementById('allocation-table-container');
-            if (calculatorData.products.length === 0) {
-                 container.innerHTML = '<p class="text-center text-gray-500 py-4">Silakan tambahkan produk dan biaya terlebih dahulu.</p>';
-                return;
-            }
-            
-            let header = `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>`;
-            calculatorData.bbbs.forEach(b => {
-                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BBB'}</th>`;
-            });
-            calculatorData.btkls.forEach(b => {
-                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BTKL'}</th>`;
-            });
-            calculatorData.bop.forEach(b => {
-                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BOP'}</th>`;
-            });
-
-            let body = '';
-            calculatorData.products.forEach(p => {
-                let row = `<td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${p.name || `Produk #${p.id}`}</td>`;
-                const alloc = calculatorData.allocations[p.id] || { bbbs: {}, btkls: {}, bop: {} };
-                
-                calculatorData.bbbs.forEach(b => {
-                    const bbbAlloc = (alloc.bbbs && alloc.bbbs[b.id]) ? alloc.bbbs[b.id] : 0;
-                    row += `<td><input type="number" step="any" value="${bbbAlloc || ''}" onchange="updateAllocation(${p.id}, 'bbb', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
-                });
-                calculatorData.btkls.forEach(b => {
-                    const btklAlloc = (alloc.btkls && alloc.btkls[b.id]) ? alloc.btkls[b.id] : 0;
-                    row += `<td><input type="number" step="any" value="${btklAlloc || ''}" onchange="updateAllocation(${p.id}, 'btkl', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
-                });
-                calculatorData.bop.forEach(b => {
-                    const bopAlloc = (alloc.bop && alloc.bop[b.id]) ? alloc.bop[b.id] : 0;
-                    row += `<td><input type="number" step="any" value="${bopAlloc || ''}" onchange="updateAllocation(${p.id}, 'bop', ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
-                });
-
-                body += `<tr class="border-b">${row}</tr>`;
-            });
-
-            container.innerHTML = `<table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>${header}</tr></thead><tbody class="bg-white divide-y divide-gray-200">${body}</tbody></table>`;
-        }
-
-        function addProduct() {
-            const newId = (calculatorData.products.length > 0 ? Math.max(...calculatorData.products.map(p => p.id)) : 0) + 1;
-            calculatorData.products.push({ id: newId, name: '', volume: 0 });
-            calculatorData.allocations[newId] = { bbbs: {}, btkls:{}, bop: {} };
-            renderProducts();
-        }
-
-        function removeProduct(id) {
-            calculatorData.products = calculatorData.products.filter(p => p.id !== id);
-            delete calculatorData.allocations[id];
-            renderProducts();
-        }
-
-        function updateProduct(id, field, value) {
-            const product = calculatorData.products.find(p => p.id === id);
-            if (product) {
-                product[field] = (field === 'name') ? value : parseFloat(value) || 0;
-            }
         }
 
         function addAdditionalProduct() {
@@ -431,50 +340,127 @@
             }
         }
 
-        function addBBB() {
-            const newId = (calculatorData.bbbs.length > 0 ? Math.max(...calculatorData.bbbs.map(b => b.id)) : 0) + 1;
-            calculatorData.bbbs.push({ id: newId, name: '', cost: 0, driverName: '', units: 0 });
-            renderCosts();
+        // --- STEP 2: BIAYA ---
+        function renderDirectCosts() {
+            const container = document.getElementById('direct-cost-container');
+            if (calculatorData.products.length === 0) {
+                 container.innerHTML = '<p class="text-center text-gray-500 py-4">Silakan tambahkan produk di Langkah 1 untuk mulai menginput biaya langsung.</p>';
+                 renderBOP();
+                 return;
+            }
+
+            container.innerHTML = calculatorData.products.map(p => {
+                const bbbHtml = p.bbbs.map(b => `
+                    <div class="p-2 border-b grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
+                        <input type="text" value="${b.name}" onchange="updateDirectCost(${p.id}, 'bbb', ${b.id}, 'name', this.value)" placeholder="Nama Bahan Baku" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="number" value="${b.price || ''}" onchange="updateDirectCost(${p.id}, 'bbb', ${b.id}, 'price', this.value)" placeholder="Harga Satuan" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="number" value="${b.qty || ''}" onchange="updateDirectCost(${p.id}, 'bbb', ${b.id}, 'qty', this.value)" placeholder="Jumlah" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="text" value="${b.unit}" onchange="updateDirectCost(${p.id}, 'bbb', ${b.id}, 'unit', this.value)" placeholder="Satuan" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <button onclick="removeDirectCost(${p.id}, 'bbb', ${b.id})" class="bg-red-50 text-red-600 px-2 py-1 rounded-md hover:bg-red-100 transition text-xs">Hapus</button>
+                    </div>
+                `).join('');
+                
+                // MODIFIED: Added unit input and changed placeholders for BTKL
+                const btklHtml = p.btkls.map(b => `
+                     <div class="p-2 border-b grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
+                        <input type="text" value="${b.name}" onchange="updateDirectCost(${p.id}, 'btkl', ${b.id}, 'name', this.value)" placeholder="Jenis Pekerjaan" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="number" value="${b.rate || ''}" onchange="updateDirectCost(${p.id}, 'btkl', ${b.id}, 'rate', this.value)" placeholder="Tarif Upah" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="number" value="${b.hours || ''}" onchange="updateDirectCost(${p.id}, 'btkl', ${b.id}, 'hours', this.value)" placeholder="Jumlah" class="col-span-1 md:col-span-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <input type="text" value="${b.unit || ''}" onchange="updateDirectCost(${p.id}, 'btkl', ${b.id}, 'unit', this.value)" placeholder="Satuan (mis. Jam)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                        <button onclick="removeDirectCost(${p.id}, 'btkl', ${b.id})" class="bg-red-50 text-red-600 px-2 py-1 rounded-md hover:bg-red-100 transition text-xs">Hapus</button>
+                    </div>
+                `).join('');
+
+                return `
+                <div class="product-cost-card">
+                    <h4 class="text-lg font-bold text-green-800 mb-3">${p.name || 'Produk Belum Bernama'}</h4>
+                    
+                    <!-- BBB Section -->
+                    <div class="mb-4">
+                        <h5 class="font-semibold text-md text-gray-600 mb-2">Biaya Bahan Baku (BBB)</h5>
+                        <div class="space-y-2" id="bbb-list-${p.id}">${bbbHtml}</div>
+                        <button onclick="addDirectCost(${p.id}, 'bbb')" class="mt-2 w-full bg-green-50 text-green-700 font-semibold py-1 px-3 rounded-lg hover:bg-green-100 transition text-sm">+ Tambah Bahan Baku</button>
+                    </div>
+
+                    <!-- BTKL Section -->
+                    <div>
+                        <h5 class="font-semibold text-md text-gray-600 mb-2">Biaya Tenaga Kerja Langsung (BTKL)</h5>
+                        <div class="space-y-2" id="btkl-list-${p.id}">${btklHtml}</div>
+                         <button onclick="addDirectCost(${p.id}, 'btkl')" class="mt-2 w-full bg-green-50 text-green-700 font-semibold py-1 px-3 rounded-lg hover:bg-green-100 transition text-sm">+ Tambah Pekerjaan</button>
+                    </div>
+                </div>
+                `
+            }).join('');
+            renderBOP();
         }
-        function removeBBB(id) {
-            calculatorData.bbbs = calculatorData.bbbs.filter(b => b.id !== id);
-            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.bbbs[id]; });
-            renderCosts();
+        
+        function addDirectCost(productId, type) {
+            const product = calculatorData.products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (type === 'bbb') {
+                const newId = (product.bbbs.length > 0 ? Math.max(...product.bbbs.map(b => b.id)) : 0) + 1;
+                product.bbbs.push({ id: newId, name: '', price: 0, qty: 0, unit: '' });
+            } else if (type === 'btkl') {
+                const newId = (product.btkls.length > 0 ? Math.max(...product.btkls.map(b => b.id)) : 0) + 1;
+                // MODIFIED: Added 'unit' property for new BTKL items
+                product.btkls.push({ id: newId, name: '', rate: 0, hours: 0, unit: '' });
+            }
+            renderDirectCosts();
         }
-        function updateBBB(id, field, value) {
-            const bbb = calculatorData.bbbs.find(b => b.id === id);
-            if (bbb) {
-                bbb[field] = ['name', 'driverName'].includes(field) ? value : parseFloat(value) || 0;
+
+        function removeDirectCost(productId, type, costId) {
+            const product = calculatorData.products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (type === 'bbb') {
+                product.bbbs = product.bbbs.filter(b => b.id !== costId);
+            } else if (type === 'btkl') {
+                 product.btkls = product.btkls.filter(b => b.id !== costId);
+            }
+            renderDirectCosts();
+        }
+
+        function updateDirectCost(productId, type, costId, field, value) {
+            const product = calculatorData.products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const list = type === 'bbb' ? product.bbbs : product.btkls;
+            const item = list.find(i => i.id === costId);
+            if (item) {
+                 item[field] = ['name', 'unit'].includes(field) ? value : parseFloat(value) || 0;
             }
         }
 
-        function addBTKL() {
-            const newId = (calculatorData.btkls.length > 0 ? Math.max(...calculatorData.btkls.map(b => b.id)) : 0) + 1;
-            calculatorData.btkls.push({ id: newId, name: '', cost: 0, driverName: '', hours: 0 });
-            renderCosts();
-        }
-        function removeBTKL(id) {
-            calculatorData.btkls = calculatorData.btkls.filter(b => b.id !== id);
-            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.btkls[id]; });
-            renderCosts();
-        }
-        function updateBTKL(id, field, value) {
-            const btkl = calculatorData.btkls.find(b => b.id === id);
-            if (btkl) {
-                btkl[field] = ['name', 'driverName'].includes(field) ? value : parseFloat(value) || 0;
+        function renderBOP() {
+            const bopList = document.getElementById('bop-list');
+             if (calculatorData.bop.length === 0) {
+                bopList.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada aktivitas BOP.</p>';
+            } else {
+                bopList.innerHTML = calculatorData.bop.map(b => `
+                    <div class="p-4 border rounded-lg" id="bop-${b.id}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" value="${b.name}" onchange="updateBOP(${b.id}, 'name', this.value)" placeholder="Nama Aktivitas BOP" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <input type="number" value="${b.cost || ''}" onchange="updateBOP(${b.id}, 'cost', this.value)" placeholder="Total Biaya (Rp)" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <input type="text" value="${b.driverName}" onchange="updateBOP(${b.id}, 'driverName', this.value)" placeholder="Nama Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <input type="number" value="${b.driverUnits || ''}" onchange="updateBOP(${b.id}, 'driverUnits', this.value)" placeholder="Jumlah Cost Driver" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                        </div>
+                         <button onclick="removeBOP(${b.id})" class="mt-2 text-xs text-red-500 hover:text-red-700">Hapus Aktivitas</button>
+                    </div>
+                `).join('');
             }
         }
-
+        
         function addBOP() {
             const newId = (calculatorData.bop.length > 0 ? Math.max(...calculatorData.bop.map(b => b.id)) : 0) + 1;
             calculatorData.bop.push({ id: newId, name: '', cost: 0, driverName: '', driverUnits: 0 });
-            renderCosts();
+            renderBOP();
         }
 
         function removeBOP(id) {
             calculatorData.bop = calculatorData.bop.filter(b => b.id !== id);
-            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc.bop[id]; });
-            renderCosts();
+            Object.values(calculatorData.allocations).forEach(alloc => { delete alloc[id]; });
+            renderBOP();
         }
 
         function updateBOP(id, field, value) {
@@ -484,65 +470,81 @@
             }
         }
 
-        function updateAllocation(productId, type, typeId, value) {
-            const val = parseFloat(value) || 0;
-            const alloc = calculatorData.allocations[productId];
-            if (!alloc) return;
-
-            if (type === 'bbb') {
-                if (!alloc.bbbs) alloc.bbbs = {};
-                alloc.bbbs[typeId] = val;
-            } else if (type === 'btkl') {
-                if (!alloc.btkls) alloc.btkls = {};
-                alloc.btkls[typeId] = val;
-            } else { // BOP
-                if (!alloc.bop) alloc.bop = {};
-                alloc.bop[typeId] = val;
+        // --- STEP 3: ALOKASI BOP ---
+        function renderAllocationTable() {
+            const container = document.getElementById('allocation-table-container');
+            if (calculatorData.products.length === 0 || calculatorData.bop.length === 0) {
+                 container.innerHTML = '<p class="text-center text-gray-500 py-4">Silakan tambahkan produk (Langkah 1) dan biaya BOP (Langkah 2) terlebih dahulu.</p>';
+                return;
             }
+            
+            let header = `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>`;
+            calculatorData.bop.forEach(b => {
+                header += `<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="${b.name}">${b.driverName || 'Driver BOP'} / unit</th>`;
+            });
+
+            let body = '';
+            calculatorData.products.forEach(p => {
+                let row = `<td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${p.name || `Produk #${p.id}`}</td>`;
+                const alloc = calculatorData.allocations[p.id] || {};
+                
+                calculatorData.bop.forEach(b => {
+                    const bopAlloc = alloc[b.id] || 0;
+                    row += `<td><input type="number" step="any" value="${bopAlloc || ''}" onchange="updateAllocation(${p.id}, ${b.id}, this.value)" placeholder="0" class="w-24 mx-auto block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-center"></td>`;
+                });
+
+                body += `<tr class="border-b">${row}</tr>`;
+            });
+
+            container.innerHTML = `<table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>${header}</tr></thead><tbody class="bg-white divide-y divide-gray-200">${body}</tbody></table>`;
+        }
+
+        function updateAllocation(productId, bopId, value) {
+            const val = parseFloat(value) || 0;
+            if (!calculatorData.allocations[productId]) {
+                calculatorData.allocations[productId] = {};
+            }
+            calculatorData.allocations[productId][bopId] = val;
         }
         
+        // --- STEP 4: DASHBOARD & KALKULASI ---
         function calculateHPP() {
             const results = [];
             const totalProductionUnits = calculatorData.products.reduce((sum, p) => sum + (p.volume || 0), 0);
 
-            const totalBBBCost = calculatorData.bbbs.reduce((sum, b) => sum + (b.cost || 0), 0);
-            const totalBTKLCost = calculatorData.btkls.reduce((sum, b) => sum + (b.cost || 0), 0);
-
-            const bbbAverageRate = (totalProductionUnits > 0) ? totalBBBCost / totalProductionUnits : 0;
-            const btklAverageRate = (totalProductionUnits > 0) ? totalBTKLCost / totalProductionUnits : 0;
-            
             const bopRates = {};
             calculatorData.bop.forEach(b => {
                 bopRates[b.id] = (b.driverUnits > 0) ? b.cost / b.driverUnits : 0;
             });
 
-            let grossTotalProductionCost = 0;
             let totalBBB = 0;
             let totalBTKL = 0;
             let totalBOP = 0;
 
             for (const product of calculatorData.products) {
-                const alloc = calculatorData.allocations[product.id];
-                if (!alloc) continue;
+                const productVolume = product.volume || 0;
 
-                const totalBBBAllocationFactor = Object.values(alloc.bbbs || {}).reduce((sum, val) => sum + val, 0);
-                const totalBTKLAllocationFactor = Object.values(alloc.btkls || {}).reduce((sum, val) => sum + val, 0);
+                // Calculate direct costs for this product
+                const totalBBBForProduct = product.bbbs.reduce((sum, bbb) => sum + ((bbb.price || 0) * (bbb.qty || 0)), 0);
+                const totalBTKLForProduct = product.btkls.reduce((sum, btkl) => sum + ((btkl.rate || 0) * (btkl.hours || 0)), 0);
 
-                const bbbPerUnit = totalBBBAllocationFactor * bbbAverageRate;
-                const btklPerUnit = totalBTKLAllocationFactor * btklAverageRate;
+                const bbbPerUnit = productVolume > 0 ? totalBBBForProduct / productVolume : 0;
+                const btklPerUnit = productVolume > 0 ? totalBTKLForProduct / productVolume : 0;
                 
+                // Calculate allocated BOP for this product
                 let bopPerUnit = 0;
+                const productAllocations = calculatorData.allocations[product.id] || {};
                 calculatorData.bop.forEach(b => {
-                    const consumption = (alloc.bop && alloc.bop[b.id]) ? alloc.bop[b.id] : 0;
+                    const consumption = productAllocations[b.id] || 0;
                     bopPerUnit += consumption * bopRates[b.id];
                 });
 
                 const hppPerUnit = bbbPerUnit + btklPerUnit + bopPerUnit;
-                const totalCostForProduct = hppPerUnit * (product.volume || 0);
+                const totalCostForProduct = hppPerUnit * productVolume;
 
                 results.push({
                     name: product.name,
-                    volume: product.volume || 0,
+                    volume: productVolume,
                     bbbPerUnit,
                     btklPerUnit,
                     bopPerUnit,
@@ -550,12 +552,12 @@
                     totalCost: totalCostForProduct
                 });
                 
-                totalBBB += bbbPerUnit * (product.volume || 0);
-                totalBTKL += btklPerUnit * (product.volume || 0);
-                totalBOP += bopPerUnit * (product.volume || 0);
+                totalBBB += totalBBBForProduct;
+                totalBTKL += totalBTKLForProduct;
+                totalBOP += bopPerUnit * productVolume;
             }
             
-            grossTotalProductionCost = totalBBB + totalBTKL + totalBOP;
+            const grossTotalProductionCost = totalBBB + totalBTKL + totalBOP;
             
             const additionalProductsValue = calculatorData.additionalProducts.reduce((sum, p) => {
                 return sum + ((p.quantity || 0) * (p.price || 0));
@@ -657,17 +659,13 @@
                         label: 'HPP per Unit (Rp)',
                         data: hppData,
                         backgroundColor: [
-                            'rgba(22, 163, 74, 0.6)',
-                            'rgba(37, 99, 235, 0.6)',
-                            'rgba(217, 119, 6, 0.6)',
-                            'rgba(220, 38, 38, 0.6)',
+                            'rgba(22, 163, 74, 0.6)', 'rgba(37, 99, 235, 0.6)',
+                            'rgba(217, 119, 6, 0.6)','rgba(220, 38, 38, 0.6)',
                             'rgba(107, 114, 128, 0.6)'
                         ],
                         borderColor: [
-                            'rgba(22, 163, 74, 1)',
-                            'rgba(37, 99, 235, 1)',
-                            'rgba(217, 119, 6, 1)',
-                            'rgba(220, 38, 38, 1)',
+                            'rgba(22, 163, 74, 1)','rgba(37, 99, 235, 1)',
+                            'rgba(217, 119, 6, 1)','rgba(220, 38, 38, 1)',
                             'rgba(107, 114, 128, 1)'
                         ],
                         borderWidth: 1
@@ -676,9 +674,7 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -700,13 +696,14 @@
                 }
             });
         }
-
+        
+        // --- NAVIGASI & INIT ---
         function navigate(direction) {
             const newStep = currentStep + direction;
             if (newStep < 1 || newStep > 4) return;
 
             if (direction > 0) {
-                 if (currentStep === 1) { renderCosts(); }
+                 if (currentStep === 1) { renderDirectCosts(); }
                  if (currentStep === 2) { renderAllocationTable(); }
                  if (currentStep === 3) { renderDashboard(); }
             }
@@ -747,6 +744,7 @@
         }
         
         function resetCalculator() {
+            // Menghapus confirm() karena tidak berfungsi baik di beberapa environment
             currentStep = 1;
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
             document.getElementById('step-1').classList.add('active');
@@ -761,175 +759,126 @@
             if (isReset || calculatorData.products.length === 0) {
                 addProduct();
                 addAdditionalProduct();
-                addBBB();
-                addBTKL();
                 addBOP();
-            } else {
-                renderProducts();
-                renderAdditionalProducts();
-                renderCosts();
-                renderAllocationTable();
-                renderDashboard();
             }
+            renderProducts();
+            renderAdditionalProducts();
+            renderDirectCosts();
         }
 
-        // --- Function to create styled Excel report ---
-        function createStyledReport(data) {
-            // --- 1. Define Styles ---
-            const titleStyle = {
-                font: { name: 'Calibri', sz: 16, bold: true },
-                alignment: { horizontal: 'center', vertical: 'center' }
-            };
-            const sectionHeaderStyle = {
-                font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: "000000" } },
-                fill: { fgColor: { rgb: "D9D2E9" } }, // Light Purple Fill
-                alignment: { horizontal: 'center', vertical: 'center' }
-            };
-            const plainColumnHeaderStyle = {
-                font: { name: 'Calibri', sz: 11, bold: true },
-                alignment: { horizontal: 'center', vertical: 'center' },
-                border: {
-                    top: { style: 'thin' }, bottom: { style: 'thin' },
-                    left: { style: 'thin' }, right: { style: 'thin' }
-                }
-            };
-            const dataCellStyle = {
-                border: {
-                    top: { style: 'thin' }, bottom: { style: 'thin' },
-                    left: { style: 'thin' }, right: { style: 'thin' }
-                },
-                alignment: { vertical: 'center' }
-            };
-            const centeredDataCellStyle = {
-                ...dataCellStyle,
-                alignment: { horizontal: 'center', vertical: 'center' }
-            };
+        // --- EXCEL EXPORT ---
+        function downloadExcel() {
+            const calculatedData = calculateHPP();
+            
+            if (calculatedData.results.length === 0) {
+                console.error("Tidak ada data untuk diunduh.");
+                return;
+            }
+
+            const { results, totalProductionCost, grossTotalProductionCost, additionalProductsValue, totalProductionUnits, avgHpp, costStructure } = calculatedData;
+
+            // --- Define Styles ---
+            const titleStyle = { font: { name: 'Calibri', sz: 16, bold: true }, alignment: { horizontal: 'center', vertical: 'center' } };
+            const sectionHeaderStyle = { font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: "000000" } }, fill: { fgColor: { rgb: "D9D2E9" } }, alignment: { horizontal: 'center', vertical: 'center' } };
+            const columnHeaderStyle = { font: { name: 'Calibri', sz: 11, bold: true }, alignment: { horizontal: 'center', vertical: 'center' }, border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } } };
+            const dataCellStyle = { border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }, alignment: { vertical: 'center' } };
+            const centeredDataCellStyle = { ...dataCellStyle, alignment: { horizontal: 'center', vertical: 'center' } };
             const labelCellStyle = { ...dataCellStyle, font: { bold: false } };
-            // FIXED: New styles for bold cells
             const boldLabelCellStyle = { ...dataCellStyle, font: { bold: true } };
             const boldDataCellStyle = { ...dataCellStyle, font: { bold: true } };
 
-
-            // --- 2. Define Number Formats ---
+            // --- Define Number Formats ---
             const rpFormat = 'Rp#,##0.00';
-            const unitFormat = '#,##0" unit"';
+            const unitFormat = '#,##0';
             const percentFormat = '0.00%';
-            const rpParenthesesFormat = 'Rp#,##0.00;"Rp("#,##0.00")"';
+            const rpParenthesesFormat = 'Rp#,##0.00;"(Rp"#,##0.00")"';
 
-            // --- 3. Prepare Data for Worksheet ---
-            const { results, totalProductionCost, grossTotalProductionCost, additionalProductsValue, totalProductionUnits, avgHpp, costStructure } = data;
-
-            const ws_data = [
+            // --- Prepare Data ---
+             const ws_data = [
                 [], // Row 1 (empty)
                 ['', 'HASIL AKHIR PERHITUNGAN HARGA POKOK PRODUKSI'], 
                 [], 
-                ['TOTAL BIAYA (Bruto)', grossTotalProductionCost], 
-                ['PENGURANG BIAYA (Produk Tambahan)', -additionalProductsValue], 
-                ['TOTAL BIAYA PRODUKSI (Neto)', totalProductionCost], 
-                ['JUMLAH UNIT PRODUKSI', totalProductionUnits], 
-                ['HPP RATA-RATA (Neto)', avgHpp], 
+                ['', 'Total Biaya Produksi (Bruto)', grossTotalProductionCost], 
+                ['', 'Pengurang Biaya (Produk Tambahan)', -additionalProductsValue], 
+                ['', 'TOTAL BIAYA PRODUKSI (Neto)', totalProductionCost], 
+                ['', 'JUMLAH UNIT PRODUKSI', totalProductionUnits], 
+                ['', 'HPP RATA-RATA (Neto)', avgHpp], 
                 [], [], 
-                ['STRUKTUR BIAYA PRODUKSI'], 
-                ['Komponen Biaya', 'Total Biaya', 'Persentase'], 
-                ['Biaya Bahan Baku (BBB)', costStructure.totalBBB, costStructure.bbbPercentage / 100], 
-                ['Biaya Tenaga Kerja (BTKL)', costStructure.totalBTKL, costStructure.btklPercentage / 100], 
-                ['Biaya Overhead (BOP)', costStructure.totalBOP, costStructure.bopPercentage / 100], 
+                ['', 'STRUKTUR BIAYA PRODUKSI'], 
+                ['', 'Komponen Biaya', 'Total Biaya', 'Persentase'], 
+                ['', 'Biaya Bahan Baku (BBB)', costStructure.totalBBB, costStructure.bbbPercentage / 100], 
+                ['', 'Biaya Tenaga Kerja (BTKL)', costStructure.totalBTKL, costStructure.btklPercentage / 100], 
+                ['', 'Biaya Overhead (BOP)', costStructure.totalBOP, costStructure.bopPercentage / 100], 
+                ['', 'Total Biaya (Bruto)', grossTotalProductionCost, 1],
                 [], [], 
-                ['LAPORAN HARGA POKOK PRODUKSI'], 
-                ['Produk', 'Volume', 'BBB/Unit', 'BTKL/Unit', 'BOP/Unit', 'HPP/Unit', 'Total Biaya']
+                ['', 'LAPORAN HARGA POKOK PRODUKSI'], 
+                ['', 'Produk', 'Volume', 'BBB/Unit', 'BTKL/Unit', 'BOP/Unit', 'HPP/Unit', 'Total Biaya']
             ];
             
             results.forEach(r => {
-                ws_data.push([r.name, r.volume, r.bbbPerUnit, r.btklPerUnit, r.bopPerUnit, r.hppPerUnit, r.totalCost]);
+                ws_data.push(['', r.name, r.volume, r.bbbPerUnit, r.btklPerUnit, r.bopPerUnit, r.hppPerUnit, r.totalCost]);
             });
-
-            // --- 4. Create Worksheet and Apply Styles ---
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-            ws['!cols'] = [ { wch: 35 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 } ];
+            // --- Apply Merges & Column Widths ---
+            ws['!cols'] = [ { wch: 2 }, { wch: 35 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 } ];
             ws['!merges'] = [
-                { s: { r: 1, c: 1 }, e: { r: 1, c: 6 } }, 
-                { s: { r: 10, c: 0 }, e: { r: 10, c: 2 } }, 
-                { s: { r: 17, c: 0 }, e: { r: 17, c: 6 } }  
+                { s: { r: 1, c: 1 }, e: { r: 1, c: 7 } }, 
+                { s: { r: 10, c: 1 }, e: { r: 10, c: 3 } }, 
+                // FIX: Corrected row index for merge from 17 to 18
+                { s: { r: 18, c: 1 }, e: { r: 18, c: 7 } }  
             ];
 
-            // Apply styles and formats
-            ws['B2'].s = titleStyle;
-            ws['A11'].s = sectionHeaderStyle;
-            ws['A18'].s = sectionHeaderStyle;
+            // --- Apply Styles & Formats ---
+            if (ws['B2']) ws['B2'].s = titleStyle;
+            if (ws['B11']) ws['B11'].s = sectionHeaderStyle;
+            // FIX: Corrected cell reference from B18 to B19
+            if (ws['B19']) ws['B19'].s = sectionHeaderStyle;
 
-            ['A12', 'B12', 'C12'].forEach(key => { if(ws[key]) ws[key].s = plainColumnHeaderStyle; });
-            ['A19', 'B19', 'C19', 'D19', 'E19', 'F19', 'G19'].forEach(key => { if(ws[key]) ws[key].s = plainColumnHeaderStyle; });
+            ['B12', 'C12', 'D12'].forEach(key => { if(ws[key]) ws[key].s = columnHeaderStyle; });
+            // FIX: Corrected row from 19 to 20
+            ['B20', 'C20', 'D20', 'E20', 'F20', 'G20', 'H20'].forEach(key => { if(ws[key]) ws[key].s = columnHeaderStyle; });
 
-            // Loop through data rows to apply borders and formats
-            for (let R = 3; R <= 7; ++R) { // Summary Section (NO COLOR)
-                if(ws[`A${R+1}`]) ws[`A${R+1}`].s = labelCellStyle;
-                if(ws[`B${R+1}`]) ws[`B${R+1}`].s = dataCellStyle;
+            // Summary
+            for (let R = 3; R <= 7; ++R) {
+                 const b_cell_ref = `B${R+1}`;
+                 const c_cell_ref = `C${R+1}`;
+                 if(ws[b_cell_ref]) ws[b_cell_ref].s = (R === 5 || R === 7) ? boldLabelCellStyle : labelCellStyle;
+                 if(ws[c_cell_ref]) ws[c_cell_ref].s = (R === 5 || R === 7) ? boldDataCellStyle : dataCellStyle;
             }
-            for (let R = 12; R <= 14; ++R) { // Cost Structure Section
-                ['A', 'B', 'C'].forEach(C => {
-                    const cell = ws[`${C}${R+1}`];
-                    if(cell) cell.s = (C === 'A') ? labelCellStyle : dataCellStyle;
-                });
-            }
-            // Apply centered style to report data
-            for (let R = 19; R < ws_data.length; ++R) { // Report Section
-                ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(C => {
-                    const cell_address = `${C}${R + 1}`;
-                    const cell = ws[cell_address];
-                    if (cell) {
-                        if (C === 'A') {
-                            cell.s = labelCellStyle; // Column A remains left-aligned
-                        } else {
-                            cell.s = centeredDataCellStyle; // Columns B-G are centered
-                        }
-                    }
-                });
-            }
-
-            // FIXED: Apply bold style to specific summary rows
-            if(ws['A6']) ws['A6'].s = boldLabelCellStyle;
-            if(ws['B6']) ws['B6'].s = boldDataCellStyle;
-            if(ws['A8']) ws['A8'].s = boldLabelCellStyle;
-            if(ws['B8']) ws['B8'].s = boldDataCellStyle;
-
-            // Apply Number Formats
-            if(ws['B4']) ws['B4'].z = rpFormat;
-            if(ws['B5']) ws['B5'].z = rpParenthesesFormat;
-            if(ws['B6']) ws['B6'].z = rpFormat;
-            if(ws['B7']) ws['B7'].z = unitFormat;
-            if(ws['B8']) ws['B8'].z = rpFormat;
+            if(ws['C4']) ws['C4'].z = rpFormat;
+            if(ws['C5']) ws['C5'].z = rpParenthesesFormat;
+            if(ws['C6']) ws['C6'].z = rpFormat;
+            if(ws['C7']) ws['C7'].z = unitFormat;
+            if(ws['C8']) ws['C8'].z = rpFormat;
             
-            if(ws['B13']) ws['B13'].z = rpFormat;
-            if(ws['B14']) ws['B14'].z = rpFormat;
-            if(ws['B15']) ws['B15'].z = rpFormat;
-            if(ws['C13']) ws['C13'].z = percentFormat;
-            if(ws['C14']) ws['C14'].z = percentFormat;
-            if(ws['C15']) ws['C15'].z = percentFormat;
+            // Cost Structure
+            for (let R = 12; R <= 15; ++R) {
+                const b_cell_ref = `B${R+1}`;
+                const c_cell_ref = `C${R+1}`;
+                const d_cell_ref = `D${R+1}`;
+                if(ws[b_cell_ref]) ws[b_cell_ref].s = R === 15 ? boldLabelCellStyle : labelCellStyle;
+                if(ws[c_cell_ref]) { ws[c_cell_ref].s = R === 15 ? boldDataCellStyle : dataCellStyle; ws[c_cell_ref].z = rpFormat; }
+                if(ws[d_cell_ref]) { ws[d_cell_ref].s = dataCellStyle; ws[d_cell_ref].z = percentFormat; }
+            }
 
+            // Report Table
+            // FIX: Corrected start row from 20 to 21
             results.forEach((r, index) => {
-                const row = 20 + index;
-                if(ws[`B${row}`]) ws[`B${row}`].z = unitFormat;
-                if(ws[`C${row}`]) ws[`C${row}`].z = rpFormat;
-                if(ws[`D${row}`]) ws[`D${row}`].z = rpFormat;
-                if(ws[`E${row}`]) ws[`E${row}`].z = rpFormat;
-                if(ws[`F${row}`]) ws[`F${row}`].z = rpFormat;
-                if(ws[`G${row}`]) ws[`G${row}`].z = rpFormat;
+                const row = 21 + index;
+                if(ws[`B${row}`]) ws[`B${row}`].s = labelCellStyle;
+                if(ws[`C${row}`]) { ws[`C${row}`].s = centeredDataCellStyle; ws[`C${row}`].z = unitFormat; }
+                if(ws[`D${row}`]) { ws[`D${row}`].s = dataCellStyle; ws[`D${row}`].z = rpFormat; }
+                if(ws[`E${row}`]) { ws[`E${row}`].s = dataCellStyle; ws[`E${row}`].z = rpFormat; }
+                if(ws[`F${row}`]) { ws[`F${row}`].s = dataCellStyle; ws[`F${row}`].z = rpFormat; }
+                if(ws[`G${row}`]) { ws[`G${row}`].s = boldDataCellStyle; ws[`G${row}`].z = rpFormat; }
+                if(ws[`H${row}`]) { ws[`H${row}`].s = dataCellStyle; ws[`H${row}`].z = rpFormat; }
             });
 
-            return ws;
-        }
-
-        function downloadExcel() {
-            const calculatedData = calculateHPP();
-            if (calculatedData.results.length === 0) {
-                alert("Tidak ada data untuk diunduh. Silakan lengkapi perhitungan terlebih dahulu.");
-                return;
-            }
-            const newWorksheet = createStyledReport(calculatedData);
+            // --- Create and Download Workbook ---
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, newWorksheet, "Laporan HPP");
-            XLSX.writeFile(wb, "Laporan_HPP_Styled.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan HPP");
+            XLSX.writeFile(wb, "Laporan_HPP.xlsx");
         }
 
         window.onload = initialize;
